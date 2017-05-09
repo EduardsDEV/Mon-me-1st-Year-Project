@@ -22,7 +22,7 @@ public class TreatmentController {
 
     @GetMapping(path = "/add") // Map ONLY GET Requests
     @ResponseBody
-    public String addNewUser(@RequestParam String name, @RequestParam double price, @RequestParam long duration) {
+    public String addNewTreatment(@RequestParam String name, @RequestParam double price, @RequestParam long duration) {
         // @ResponseBody means the returned String is the response, not a view name
         // @RequestParam means it is a parameter from the GET or POST request
 
