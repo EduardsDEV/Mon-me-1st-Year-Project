@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller    // This means that this class is a Controller
 //@RestController @Controller vs @RestController?
-@RequestMapping(path = "/treatments",method = RequestMethod.GET) // This means URL's start with /demo (after Application path)
+@RequestMapping(path = "/treatments",method = RequestMethod.GET) // This means URL's start with /treatments (after Application path)
 public class TreatmentController {
 
     @Autowired // This means to get the bean called treatmentRepository
@@ -22,7 +22,7 @@ public class TreatmentController {
 
     @GetMapping(path = "/add") // Map ONLY GET Requests
     @ResponseBody
-    public String addNewTreatment(@RequestParam String name, @RequestParam double price, @RequestParam long duration) {
+    public String addNewTreatment(@RequestParam String name, @RequestParam float price, @RequestParam long duration) {
         // @ResponseBody means the returned String is the response, not a view name
         // @RequestParam means it is a parameter from the GET or POST request
 

@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
  * Created by edward on 07-May-17.
  */
 @Repository
-public interface CustomerRepository extends CrudRepository<Customer, String>{
+public interface CustomerRepository extends CrudRepository<Customer, Long>{
 }

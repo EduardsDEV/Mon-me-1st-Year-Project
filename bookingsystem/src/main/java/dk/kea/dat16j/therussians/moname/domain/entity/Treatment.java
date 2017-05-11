@@ -18,9 +18,11 @@ public class Treatment{
     @Column(name = "treatment_name")
     private String name;
     @Column(name = "treatment_price")
-    private double price;
+    private float price;
     @Column(name = "treatment_duration")
     private long duration;
+    @Column(name = "treatment_description")
+    private String description;
 
     public String getName() {
         return name;
@@ -30,11 +32,11 @@ public class Treatment{
         this.name = name;
     }
 
-    public double getPrice() {
+    public float getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(float price) {
         this.price = price;
     }
 
@@ -44,5 +46,13 @@ public class Treatment{
 
     public void setDuration(long minutes) {
         this.duration = minutes;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
