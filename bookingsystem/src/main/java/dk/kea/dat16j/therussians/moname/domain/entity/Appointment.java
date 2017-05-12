@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 public class Appointment {
     @Id
     @Column(name = "appointment_id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue()
     private long appointmentId;
     @Column(name = "appointment_date")
     private LocalDateTime dateAndTime;
@@ -18,7 +18,7 @@ public class Appointment {
     private Customer customer;
     @Column(name = "comment")
     private String comment;
-    @Column(name = "app_treatment_name")
+    @Column(name = "appointment_treatment")
     private Treatment treatment;
 
     public long getAppointmentId() {

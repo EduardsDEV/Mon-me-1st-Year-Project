@@ -11,7 +11,7 @@ import java.time.LocalDate;
 public class Customer {
     @Id
     @Column(name = "customer_id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue()
     private long id;
     @Column(name = "first_name")
     private String firstName;

@@ -20,6 +20,9 @@ import java.time.LocalDateTime;
 public class AppointmentController {
 
     @Autowired
+    public AppointmentController(AppointmentRepository appointmentRepository) {
+        this.appointmentRepository = appointmentRepository;
+    }
     private AppointmentRepository appointmentRepository;
 
     @RequestMapping(path = "/add")
