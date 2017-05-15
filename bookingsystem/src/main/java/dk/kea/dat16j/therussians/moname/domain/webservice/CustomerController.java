@@ -22,6 +22,7 @@ public class CustomerController {
     public CustomerController(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
     }
+
     private CustomerRepository customerRepository;
 
     @RequestMapping(path = "/add") // Map ONLY GET Requests
@@ -42,6 +43,7 @@ public class CustomerController {
         customerRepository.save(c);
         return "Saved";
     }
+
     @ResponseBody
     @RequestMapping(path = "/all", method = RequestMethod.GET)
     public Iterable<Customer> getAllCustomers() {
@@ -51,10 +53,14 @@ public class CustomerController {
 
     @RequestMapping(path = "/{customer}/edit")
     @ResponseBody
-    public String editCustomer(@PathVariable(name = "customer") long customerId, @RequestParam String firstName, @RequestParam String lastName, @RequestParam String phoneNumber, @RequestParam String birthday) {
+    public String editCustomer(@PathVariable(name = "customer") long customerId,
+                               @RequestParam String firstName,
+                               @RequestParam String lastName,
+                               @RequestParam String phoneNumber,
+                               @RequestParam String birthday) {
 
         Customer c = customerRepository.findOne(customerId);
-        if(c == null){
+        if (c == null) {
             return "Error";
         }
 
@@ -64,16 +70,19 @@ public class CustomerController {
         c.setBirthday(LocalDate.parse(birthday));
 
         customerRepository.save(c);
-        return "Edited";
+        return "Customer edited!";
     }
+
     @RequestMapping(path = "/{customer}/delete")
     @ResponseBody
     public String deleteCustomer(@PathVariable(name = "customer") long customer) {
 
-        try{
+        try {
             customerRepository.delete(customer);
-            return "deleted";
-        } catch(Exception e){e.printStackTrace();}
+            return "Customer deleted!";
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return "Error";
 
 

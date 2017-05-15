@@ -26,7 +26,10 @@ public class TreatmentController {
 
     @RequestMapping(path = "/add") // Map ONLY GET Requests
     @ResponseBody
-    public String addNewTreatment(@RequestParam String name, @RequestParam float price, @RequestParam long duration, @RequestParam String description) {
+    public String addNewTreatment(@RequestParam String name,
+                                  @RequestParam float price,
+                                  @RequestParam long duration,
+                                  @RequestParam String description) {
         // @ResponseBody means the returned String is the response, not a view name
         // @RequestParam means it is a parameter from the GET or POST request
 
@@ -46,4 +49,34 @@ public class TreatmentController {
         // This returns a JSON or XML with the users
         return treatmentRepository.findAll();
     }
+
+    @RequestMapping(path = "/{treatment}/edit")
+    @ResponseBody
+    public String editTreatment(@PathVariable(name = "treatment") String treatment,
+                                @RequestParam float price,
+                                @RequestParam long duration,
+                                @RequestParam String description ){
+        Treatment t = treatmentRepository.findOne(treatment);
+        if(t == null){
+            return "Error";
+        }
+        t.setPrice(price);
+        t.setDuration(duration);
+        t.setDescription(description);
+
+        treatmentRepository.save(t);
+        return "Treatment edited!";
+    }
+    //this method will probably not be used, as it's probably better to just gray out treatment if you don't wanna use it anymore
+    @RequestMapping(path = "/{treatment}/delete")
+    @ResponseBody
+    public String deleteTreatment(@PathVariable(name = "treatment") String treatment){
+        try{
+            treatmentRepository.delete(treatment);
+            return "Treatment deleted!";
+        } catch(Exception e){e.printStackTrace();}
+        return "Error";
+    }
+
+
 }
