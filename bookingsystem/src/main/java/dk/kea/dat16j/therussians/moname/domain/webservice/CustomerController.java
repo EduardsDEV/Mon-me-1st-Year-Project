@@ -48,4 +48,35 @@ public class CustomerController {
         // This returns a JSON with the users
         return customerRepository.findAll();
     }
+
+    @RequestMapping(path = "/{customer}/edit")
+    @ResponseBody
+    public String editCustomer(@PathVariable(name = "customer") long customerId, @RequestParam String firstName, @RequestParam String lastName, @RequestParam String phoneNumber, @RequestParam String birthday) {
+
+        Customer c = customerRepository.findOne(customerId);
+        if(c == null){
+            return "Error";
+        }
+
+        c.setFirstName(firstName);
+        c.setLastName(lastName);
+        c.setPhoneNumber(phoneNumber);
+        c.setBirthday(LocalDate.parse(birthday));
+
+        customerRepository.save(c);
+        return "Edited";
+    }
+    @RequestMapping(path = "/{customer}/delete")
+    @ResponseBody
+    public String deleteCustomer(@PathVariable(name = "customer") long customer) {
+
+        try{
+            customerRepository.delete(customer);
+            return "deleted";
+        } catch(Exception e){e.printStackTrace();}
+        return "Error";
+
+
+    }
+
 }

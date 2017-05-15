@@ -15,11 +15,11 @@ public class Appointment {
     @Column(name = "appointment_date")
     private LocalDateTime dateAndTime;
     @Column(name = "app_customer_id")
-    private Customer customer;
+    private transient Customer customer;
     @Column(name = "comment")
     private String comment;
     @Column(name = "appointment_treatment")
-    private Treatment treatment;
+    private  transient Treatment treatment;
 
     public long getAppointmentId() {
         return appointmentId;
