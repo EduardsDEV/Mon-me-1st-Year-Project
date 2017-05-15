@@ -1,28 +1,35 @@
 package dk.kea.dat16j.therussians.moname.domain.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import javax.persistence.*;
+import java.util.List;
 
 /**
  * Created by Chris on 07-May-17.
  */
 @Entity // this is Java EE, there is a Hibernate @Entity but is deprecated? same goes for almost all the annotaions here
 @Table(name = "treatments")
-public class Treatment{
+public class Treatment {
 
     //@Column(name = "treatment_name",unique = true,nullable = false)
     //@GeneratedValue
     @Id
     @Column(name = "treatment_name")
     private String name;
+
     @Column(name = "treatment_price")
     private float price;
+
     @Column(name = "treatment_duration")
     private long duration;
+
     @Column(name = "treatment_description")
     private String description;
+
+    @OneToMany(targetEntity = Appointment.class, mappedBy = "treatment", fetch = FetchType.LAZY)
+    @JsonBackReference
+    private List<Appointment> appointments;
 
     public String getName() {
         return name;
@@ -54,5 +61,13 @@ public class Treatment{
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public List<Appointment> getAppointments() {
+        return appointments;
+    }
+
+    public void setAppointments(List<Appointment> appointments) {
+        this.appointments = appointments;
     }
 }

@@ -1,7 +1,5 @@
 package dk.kea.dat16j.therussians.moname.domain.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -25,14 +23,17 @@ public class Appointment {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private transient LocalDateTime dateAndTime;
 
-    //@Column(name = "app_customer_id")
-    private transient Customer customer;
+    @ManyToOne
+    @JoinColumn(name = "app_customer_id")
+    private Customer customer;
+
+    @JoinColumn(name = "appointment_treatment")
+    @ManyToOne
+    private Treatment treatment;
 
     @Column(name = "comment")
     private String comment;
 
-    //@Column(name = "appointment_treatment")
-    private transient Treatment treatment;
 
     public long getAppointmentId() {
         return appointmentId;
