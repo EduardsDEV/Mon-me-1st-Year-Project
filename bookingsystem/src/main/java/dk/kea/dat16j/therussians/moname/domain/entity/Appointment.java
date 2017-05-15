@@ -1,5 +1,9 @@
 package dk.kea.dat16j.therussians.moname.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -7,19 +11,28 @@ import java.time.LocalDateTime;
  * Created by Chris on 10-May-17.
  */
 @Entity
+@Table(name = "appointments")
 public class Appointment {
+
     @Id
     @Column(name = "appointment_id")
     @GeneratedValue()
     private long appointmentId;
+
     @Column(name = "appointment_date")
-    private LocalDateTime dateAndTime;
-    @Column(name = "app_customer_id")
+    //@JsonSerialize(using = LocalDateTimeSerializer.class)
+    //@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "UTC") JSON serialization problem
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private transient LocalDateTime dateAndTime;
+
+    //@Column(name = "app_customer_id")
     private transient Customer customer;
+
     @Column(name = "comment")
     private String comment;
-    @Column(name = "appointment_treatment")
-    private  transient Treatment treatment;
+
+    //@Column(name = "appointment_treatment")
+    private transient Treatment treatment;
 
     public long getAppointmentId() {
         return appointmentId;
@@ -38,11 +51,11 @@ public class Appointment {
     }
 
     public float getTotalPrice() {
-        return treatment.getPrice();
+        return treatment == null ? -1 : treatment.getPrice();
     }
 
     public long getDuration() {
-        return treatment.getDuration();
+        return treatment == null ? -1 : treatment.getDuration();
     }
 
     public Customer getCustomer() {
