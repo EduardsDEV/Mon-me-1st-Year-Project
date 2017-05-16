@@ -4,12 +4,11 @@ import dk.kea.dat16j.therussians.moname.domain.entity.Appointment;
 import dk.kea.dat16j.therussians.moname.domain.entity.Customer;
 import dk.kea.dat16j.therussians.moname.domain.entity.Treatment;
 import dk.kea.dat16j.therussians.moname.domain.repository.AppointmentRepository;
+import dk.kea.dat16j.therussians.moname.domain.repository.CustomerRepository;
+import dk.kea.dat16j.therussians.moname.domain.repository.TreatmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 
@@ -21,25 +20,28 @@ import java.time.LocalDateTime;
 public class AppointmentController {
 
     @Autowired
-    public AppointmentController(AppointmentRepository appointmentRepository) {
+    public AppointmentController(AppointmentRepository appointmentRepository, CustomerRepository customerRepository, TreatmentRepository treatmentRepository) {
         this.appointmentRepository = appointmentRepository;
+        this.customerRepository = customerRepository;
+        this.treatmentRepository = treatmentRepository;
     }
 
     private AppointmentRepository appointmentRepository;
+    private CustomerRepository customerRepository;
+    private TreatmentRepository treatmentRepository;
 
     @ResponseBody
     @RequestMapping(path = "/add")
-    public String addAppointment(@RequestParam long id,
-                                 @RequestBody LocalDateTime date,
-                                 @RequestBody Customer customer,
-                                 @RequestBody Treatment treatment,
+    public String addAppointment(@RequestParam(name = "datetime") String dateAndTime,
+                                 @RequestParam(name = "customer") long customerId,
+                                 @RequestParam(name = "treatment") String treatmentName,
                                  @RequestParam(required = false) String comment) {
         Appointment appointment = new Appointment();
-        appointment.setAppointmentId(id);
-        appointment.setDate(date);
+
+        appointment.setDate(LocalDateTime.parse(dateAndTime));
         appointment.setComment(comment == null || comment.isEmpty() ? null : comment);
-        appointment.setCustomer(customer);
-        appointment.setTreatment(treatment);
+        appointment.setCustomer(customerRepository.findOne(customerId));
+        appointment.setTreatment(treatmentRepository.findOne(treatmentName));
 
         appointmentRepository.save(appointment);
         return "Saved";
@@ -48,8 +50,35 @@ public class AppointmentController {
     @ResponseBody
     @RequestMapping(path = "/all")
     public Iterable<Appointment> getAllAppointments() {
-        Iterable<Appointment> appointments = appointmentRepository.findAll();
-        appointments.forEach(appointment -> System.out.println(appointment.getDate()));
-        return appointments;
+        return appointmentRepository.findAll();
+    }
+
+    @ResponseBody
+    @RequestMapping(path = "/{appointment}/delete")
+    public String deleteAppointment(@PathVariable(name = "appointment") long appointmentId) {
+        appointmentRepository.delete(appointmentId);
+        // TODO: 16-May-17 Check if appointment is deleted from Customer's list and Treatment's list
+        return "Deleted";
+    }
+
+    @ResponseBody
+    @RequestMapping(path = "/{appointmentId}/edit")
+    public String editAppointment(@PathVariable(name = "appointmentId") long appointmentId,
+                                  @RequestParam(name = "datetime") String dateAndTime,
+                                  @RequestParam(name = "customer") long customerId,
+                                  @RequestParam(name = "treatment") String treatmentName,
+                                  @RequestParam(required = false) String comment) {
+
+        Appointment appointment = new Appointment();
+
+        appointment.setAppointmentId(appointmentId);
+        appointment.setDate(LocalDateTime.parse(dateAndTime));
+        appointment.setComment(comment == null || comment.isEmpty() ? null : comment);
+        appointment.setCustomer(customerRepository.findOne(customerId));
+        appointment.setTreatment(treatmentRepository.findOne(treatmentName));
+
+        appointmentRepository.save(appointment);
+
+        return "Edited";
     }
 }
