@@ -2,10 +2,14 @@ package dk.kea.dat16j.therussians.moname.domain.webservice;
 
 import dk.kea.dat16j.therussians.moname.domain.entity.Treatment;
 import dk.kea.dat16j.therussians.moname.domain.repository.TreatmentRepository;
+import dk.kea.dat16j.therussians.moname.technicalservices.HtmlFileLoad;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * Created by Chris on 07-May-17.
@@ -67,6 +71,7 @@ public class TreatmentController {
         treatmentRepository.save(t);
         return "Treatment edited!";
     }
+
     //this method will probably not be used, as it's probably better to just gray out treatment if you don't wanna use it anymore
     @RequestMapping(path = "/{treatment}/delete")
     @ResponseBody
@@ -78,5 +83,11 @@ public class TreatmentController {
         return "Error";
     }
 
+    @RequestMapping(method = RequestMethod.GET)
+    public void getFile(
+            HttpServletResponse response) throws IOException {
+        String src= "src/main/resources/templates/treatments.html";
+        HtmlFileLoad.loadPage(response, src);
+    }
 
 }
