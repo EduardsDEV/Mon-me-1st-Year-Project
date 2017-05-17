@@ -27,6 +27,9 @@ public class Treatment {
     @Column(name = "treatment_description")
     private String description;
 
+    @Column(name = "category")
+    private String category; // TODO: 17-May-17 Make it an enumaration 
+
     @OneToMany(targetEntity = Appointment.class, mappedBy = "treatment", fetch = FetchType.LAZY)
     @JsonBackReference
     private List<Appointment> appointments;
@@ -70,4 +73,55 @@ public class Treatment {
     public void setAppointments(List<Appointment> appointments) {
         this.appointments = appointments;
     }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    /*public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public void setCategory(String category) {
+        try {
+            this.category = Category.valueOf(category);
+        } catch (IllegalArgumentException e) {
+            this.category = Category.UNKNOWN;
+        }
+    }*/
+
+    public enum Category {
+        UNKNOWN (),
+        MASSAGE ("massage"),
+        FACIAL ("facial"),
+        MAKEUP ("makeup"),
+        HAIR_REMOVAL ("hair_removal");
+
+        private final String name;
+
+        private Category(String s)
+        {
+            name = s.toLowerCase();
+        }
+
+        private Category(){name = "";}
+
+        public boolean equalsName(String otherName) {
+            // (otherName == null) check is not needed because name.equals(null) returns false
+            return name.equalsIgnoreCase(otherName);
+        }
+
+        public String toString() {
+            return this.name;
+        }
+    }
+
 }
