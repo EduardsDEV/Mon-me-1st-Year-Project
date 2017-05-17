@@ -1,8 +1,6 @@
 package dk.kea.dat16j.therussians.moname.domain.webservice;
 
 import dk.kea.dat16j.therussians.moname.domain.entity.Appointment;
-import dk.kea.dat16j.therussians.moname.domain.entity.Customer;
-import dk.kea.dat16j.therussians.moname.domain.entity.Treatment;
 import dk.kea.dat16j.therussians.moname.domain.repository.AppointmentRepository;
 import dk.kea.dat16j.therussians.moname.domain.repository.CustomerRepository;
 import dk.kea.dat16j.therussians.moname.domain.repository.TreatmentRepository;

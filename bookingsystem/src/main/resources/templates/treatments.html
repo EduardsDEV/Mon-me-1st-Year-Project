@@ -3,8 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <title>Mon &Acirc;me treatments</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.ajax({
+                url:"http://localhost:8080/treatments",
+                method:"GET",
+                dataType:"json",
+                success:function (data) {
+                    var temp = "";
+                    for(i = 0; i < data.length; i++){
+                        temp += data[i].name + " " + data[i].price + "<br>";
+
+                    }
+                    $("#listtreatments").append(temp);
+                    console.log(data);
+                }
+            });
+        })
+
+
+    </script>
 </head>
 <body>
-    List of treatments should be displayed here.
+List of treatments should be displayed here.
+<div id="listtreatments">
+
+</div>
 </body>
 </html>

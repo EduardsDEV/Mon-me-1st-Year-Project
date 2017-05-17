@@ -1,5 +1,6 @@
 package dk.kea.dat16j.therussians.moname.domain.entity;
 
+import dk.kea.dat16j.therussians.moname.technicalservices.LocalDateTimeAttributeConverter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -21,7 +22,8 @@ public class Appointment {
     //@JsonSerialize(using = LocalDateTimeSerializer.class)
     //@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "UTC") JSON serialization problem
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private transient LocalDateTime dateAndTime;
+    @Convert(converter = LocalDateTimeAttributeConverter.class)
+    private LocalDateTime dateAndTime;
 
     @ManyToOne
     @JoinColumn(name = "app_customer_id")
