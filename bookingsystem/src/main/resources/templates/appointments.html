@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>mon &Acirc;me Treatments</title>
+    <meta charset="utf-8"/>
+    <title>mon &Acirc;me Appointments</title>
+
 
     <!-- Used for making an url request to the Java application-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -10,26 +11,29 @@
     <script type="text/javascript">
         $(document).ready(function () {
             $.ajax({
-                url: "http://localhost:8080/treatments/all",
+                url: "http://localhost:8080/appointments/all",
                 method: "GET",
                 dataType: "json",
                 success: function (data) {
                     var temp = "";
                     for (i = 0; i < data.length; i++) {
-                        temp += "<p align='middle'>" + data[i].name + "&nbsp;&nbsp;&nbsp;&nbsp;Price: " + data[i].price + " dkk " + "&nbsp;&nbsp;&nbsp;&nbsp;Duration: " + data[i].duration + " minutes <br>";
-                        temp += data[i].description + "</p>";
+                        //temp += "<tr>" + "<td>" + data[i] + "</td>" + "</tr>";
                     }
-                    $("#listtreatments").append(temp);
+                    $("#appointments").append(temp);
                     console.log(data);
                 }
             });
         })
     </script>
+
 </head>
 <body>
-
-<div id="listtreatments">
-</div>
-
+    <table id="appointments">
+        <tr>
+            <td>Treatment name</td>
+            <td>Starts at</td>
+            <td>Treatment duration</td>
+        </tr>
+    </table>
 </body>
 </html>

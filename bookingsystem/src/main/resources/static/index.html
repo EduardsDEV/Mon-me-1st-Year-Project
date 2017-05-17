@@ -1,28 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <head>
+    <meta charset="utf-8">
+    <title>mon &acirc;me - Hudplejeklinik v/ Frida Sandberg</title>
+    <link href="css/styles.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+  </head>
+  <body>
 
-    <title>Mon &Acirc;me </title>
+  <header>
+    <!-- navigation bar -->
+    <nav class="navbar transparent navbar-inverse">
+        <div class="container">
+            <!-- Logo -->
+            <div class="navbar-header">
+                <a href="index.html" class="navbar-brand" id="logo">Mon &Acirc;me</a>
+            </div>
 
-    <link rel="stylesheet" href="css/homepage.css"/>
+            <!-- Menu Items aligned right-->
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav navbar-right" id="list">
+                    <li><a href="http://localhost:8080">HOME</a></li>
+                    <li><a href="http://localhost:8080/treatments">TREATMENTS</a></li>
+                    <li><a href="#">BOOKING</a></li>
+                    <li><a href="https://www.facebook.com/monamedk" target="_blank"><img src="images/facebook.png"></a></li>
+                    <li><a href="https://www.instagram.com/monamefrida/" target="_blank"><img src="images/instagram.png"></a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+  </header>
 
-</head>
-<body>
-    <a href="http://localhost:8080">
-        <img src="https://static.pexels.com/photos/104827/cat-pet-animal-domestic-104827.jpeg" width="300" height="300"></a>
-
-    <div class="tab">
-        <button class="tablinks" onclick="openTab(event, 'Home')">Home</button>
-        <button class="tablinks" onclick=window.open("http://localhost:8080/treatments/all","_self")>Treatments</button>
-        <button class="tablinks" onclick="openTab(event, 'BookHere')">Book here</button>
+  <footer class="navbar-fixed-bottom">
+    <div class="container">
+      <div class="col-md-12">
+        <p class="text-center" id="copyright">© 2017 mon âme – All rights reserved</p>
+      </div>
     </div>
+  </footer>
 
-    <img src="images/hotexe.jpg">
-
-
-    <!--<script src="js/tabopener.js"></script>-->
-</body>
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+  </body>
 </html>

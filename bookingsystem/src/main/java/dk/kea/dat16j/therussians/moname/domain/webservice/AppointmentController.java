@@ -4,10 +4,13 @@ import dk.kea.dat16j.therussians.moname.domain.entity.Appointment;
 import dk.kea.dat16j.therussians.moname.domain.repository.AppointmentRepository;
 import dk.kea.dat16j.therussians.moname.domain.repository.CustomerRepository;
 import dk.kea.dat16j.therussians.moname.domain.repository.TreatmentRepository;
+import dk.kea.dat16j.therussians.moname.technicalservices.HtmlFileLoad;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.time.LocalDateTime;
 
 /**
@@ -78,5 +81,12 @@ public class AppointmentController {
         appointmentRepository.save(appointment);
 
         return "Edited";
+    }
+
+    @ResponseBody
+    @RequestMapping(method = RequestMethod.GET)
+    public void loadPage(HttpServletResponse response) throws IOException {
+        String src = "src/main/resources/templates/appointments.html";
+        HtmlFileLoad.loadPage(response, src);
     }
 }

@@ -50,7 +50,7 @@ public class TreatmentController {
     @ResponseBody
     @RequestMapping(path = "/all", method = RequestMethod.GET)
     public Iterable<Treatment> getAllTreatments() {
-        // This returns a JSON or XML with the users
+        // This returns a JSON or XML with the treatments
         return treatmentRepository.findAll();
     }
 
