@@ -138,6 +138,7 @@ public class AppointmentController {
     @ResponseBody
     public List<Appointment> getScheduleForWeek(@PathVariable(name = "date") String date) {
         LocalDate temp = LocalDate.parse(date);
+
         boolean wasSunday = false;
         List<Appointment> weekAppointments = new LinkedList<>();
         while (temp.getDayOfWeek().getValue() <= 7 && !wasSunday) {

@@ -20,16 +20,16 @@ public class CustomerAccountController {
         this.customerAccountRepository = customerAccountRepository;
     }
 
-    @RequestMapping(path = "/{customerAccount}/create")
+    @RequestMapping(path = "/create")
     @ResponseBody
     public String createCustomerAccount(@RequestParam String email,
                                         @RequestParam String password,
-                                        @RequestParam long accountId) {
+                                        @RequestParam long customerId) {
         CustomerAccount ac = new CustomerAccount();
 
         ac.setEmail(email);
         ac.setPassword(password);
-        ac.setCustomerId(accountId);
+        ac.setCustomerId(customerId);
 
         customerAccountRepository.save(ac);
         return "Saved";
@@ -51,7 +51,7 @@ public class CustomerAccountController {
         }
         ac.setPassword(password);
         customerAccountRepository.save(ac);
-        return "Password changed";
+        return "Edited";
     }
 
 
