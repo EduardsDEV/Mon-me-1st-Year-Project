@@ -143,7 +143,7 @@ public class AppointmentController {
         while (temp.getDayOfWeek().getValue() <= 7 && !wasSunday) {
             wasSunday = temp.getDayOfWeek().getValue() == 7;
             weekAppointments.addAll(getAppointmentsForDate(temp.toString()));
-            temp.plusDays(1);
+            temp = temp.plusDays(1);
         }
 
         return weekAppointments;
