@@ -45,20 +45,12 @@ public class Appointment {
         this.appointmentId = appointmentId;
     }
 
-    public LocalDateTime getDate() {
+    public LocalDateTime getDateAndTime() {
         return dateAndTime;
     }
 
     public void setDate(LocalDateTime dateAndTime) {
         this.dateAndTime = dateAndTime;
-    }
-
-    public float getTotalPrice() {
-        return treatment == null ? -1 : treatment.getPrice();
-    }
-
-    public long getDuration() {
-        return treatment == null ? -1 : treatment.getDuration();
     }
 
     public Customer getCustomer() {
