@@ -134,7 +134,7 @@ public class AppointmentController {
         return temp;
     }
 
-    @RequestMapping(path = "/{date}/all")
+    @RequestMapping(path = "/{date}/week")
     @ResponseBody
     public List<Appointment> getScheduleForWeek(@PathVariable(name = "date") String date) {
         LocalDate temp = LocalDate.parse(date);

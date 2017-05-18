@@ -14,8 +14,9 @@ import org.springframework.web.bind.annotation.*;
 public class CustomerAccountController {
 
     private CustomerAccountRepository customerAccountRepository;
-@Autowired
-    public CustomerAccountController(CustomerAccountRepository customerAccountRepository){
+
+    @Autowired
+    public CustomerAccountController(CustomerAccountRepository customerAccountRepository) {
         this.customerAccountRepository = customerAccountRepository;
     }
 
@@ -23,37 +24,35 @@ public class CustomerAccountController {
     @ResponseBody
     public String createCustomerAccount(@RequestParam String email,
                                         @RequestParam String password,
-                                        @RequestParam long accountId ){
+                                        @RequestParam long accountId) {
         CustomerAccount ac = new CustomerAccount();
+
         ac.setEmail(email);
         ac.setPassword(password);
-        ac.setAccountId(accountId);
+        ac.setCustomerId(accountId);
 
         customerAccountRepository.save(ac);
-        return"Saved";
+        return "Saved";
     }
 
     @ResponseBody
     @RequestMapping(path = "/all", method = RequestMethod.GET)
-    public Iterable<CustomerAccount> getAllCustomerAccounts(){
+    public Iterable<CustomerAccount> getAllCustomerAccounts() {
         return customerAccountRepository.findAll();
     }
 
     @ResponseBody
     @RequestMapping(path = "/{customerAccount}/edit")
     public String editCustomerAccount(@PathVariable(name = "customerAccount") String email,
-                                      @RequestParam String password){
+                                      @RequestParam String password) {
         CustomerAccount ac = customerAccountRepository.findOne(email);
-        if(ac == null){
+        if (ac == null) {
             return "Super Error";
         }
         ac.setPassword(password);
         customerAccountRepository.save(ac);
         return "Password changed";
     }
-
-
-
 
 
 }

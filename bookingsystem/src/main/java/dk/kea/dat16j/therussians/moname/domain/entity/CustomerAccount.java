@@ -20,7 +20,7 @@ public class CustomerAccount {
     private String password;
 
     @Column(name = "acc_customer_id")
-    private long accountId;
+    private long customerId;
 
     public String getEmail() {
         return email;
@@ -38,12 +38,11 @@ public class CustomerAccount {
         this.password = password;
     }
 
-    public long getAccountId() {
-
-        return accountId;
+    public long getCustomerId() {
+        return customerId;
     }
 
-    public void setAccountId(long accountId) {
-        this.accountId = accountId;
+    public void setCustomerId(long customerId) {
+        this.customerId = customerId;
     }
 }
