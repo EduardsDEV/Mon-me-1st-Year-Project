@@ -14,8 +14,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -120,16 +122,31 @@ public class AppointmentController {
     // Finds all appointments for a specific date
     @ResponseBody
     @RequestMapping(path = "/{date}/all")
-    public List<Appointment> getAppointmentsForDate(@PathVariable(name = "date") String dateTime) {
+    public List<Appointment> getAppointmentsForDate(@PathVariable(name = "date") String date) {
         List<Appointment> temp = new ArrayList<>();
-        LocalDate date = LocalDate.parse(dateTime);
+        LocalDate dateTemp = LocalDate.parse(date);
         appointmentRepository.findAll().forEach(a -> {
-                    if (a.getDateAndTime().toLocalDate().equals(date)) {
+                    if (a.getDateAndTime().toLocalDate().equals(dateTemp)) {
                         temp.add(a);
                     }
                 }
         );
         return temp;
+    }
+
+    @RequestMapping(path = "/{date}/all")
+    @ResponseBody
+    public List<Appointment> getScheduleForWeek(@PathVariable(name = "date") String date) {
+        LocalDate temp = LocalDate.parse(date);
+        boolean wasSunday = false;
+        List<Appointment> weekAppointments = new LinkedList<>();
+        while (temp.getDayOfWeek().getValue() <= 7 && !wasSunday) {
+            wasSunday = temp.getDayOfWeek().getValue() == 7;
+            weekAppointments.addAll(getAppointmentsForDate(temp.toString()));
+            temp.plusDays(1);
+        }
+
+        return weekAppointments;
     }
 
     @ResponseBody
