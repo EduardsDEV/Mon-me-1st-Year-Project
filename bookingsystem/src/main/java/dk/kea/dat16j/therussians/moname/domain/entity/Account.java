@@ -20,16 +20,17 @@ public abstract class Account {
     @Column(name = "account_id")
     private long accountId;
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true, nullable = false)
     private String email;
 
-    @Min(value = 5) // sets a minimum length for the password
+    @Min(value = 3) // sets a minimum length for the password
     @Column(name = "password")
     private String password;
 
     @ManyToMany
     @JoinTable(name = "accounts_roles", joinColumns = @JoinColumn(name = "account_id", referencedColumnName = "account_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+    @JsonBackReference
     private Collection<Role> roles;
 
     public String getEmail() {

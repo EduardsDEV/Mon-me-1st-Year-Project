@@ -1,5 +1,7 @@
 package dk.kea.dat16j.therussians.moname.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 import java.util.Collection;
 
@@ -19,6 +21,7 @@ public class Privilege {
     private String name;
 
     @ManyToMany(mappedBy = "privileges", targetEntity = Role.class)
+    @JsonBackReference
     private Collection<Role> roles;
 
     public Privilege() {

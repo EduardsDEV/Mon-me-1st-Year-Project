@@ -62,7 +62,9 @@ public class CustomerAccountController {
     @ResponseBody
     @RequestMapping(path = "/{customerAccount}/edit")
     public String editCustomerAccount(@PathVariable(name = "customerAccount") String email,
-                                      @RequestParam String password) {
+                                      @RequestParam String password,
+                                      @RequestParam String newEmail,
+                                      @RequestParam String newPassword) {
         assert false:"I am here";
         Account ac = LoginHandler.login(accountRepository, email, password);
         CustomerAccount temp;
@@ -72,8 +74,8 @@ public class CustomerAccountController {
             return "Invalid Customer Account";
         }
 
-        temp.setEmail(email);
-        temp.setPassword(password);
+        temp.setEmail(newEmail);
+        temp.setPassword(newPassword);
 
         // TODO: 19-May-17 Should the customer id be changed?
         //temp.setCustomerId(customerId);
