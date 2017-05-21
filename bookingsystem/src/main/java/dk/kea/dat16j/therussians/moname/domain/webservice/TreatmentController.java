@@ -37,12 +37,10 @@ public class TreatmentController {
     public TreatmentController(TreatmentRepository treatmentRepository, AccountRepository accountRepository, RoleRepository roleRepository) {
         this.treatmentRepository = treatmentRepository;
         this.accountRepository = accountRepository;
-        this.roleRepository = roleRepository;
     }
 
     private TreatmentRepository treatmentRepository;
     private AccountRepository accountRepository;
-    private RoleRepository roleRepository;
 
     @RequestMapping(path = "/add") // Map ONLY GET Requests
     @ResponseBody
@@ -50,20 +48,45 @@ public class TreatmentController {
                                   @RequestParam float price,
                                   @RequestParam long duration,
                                   @RequestParam String description,
-                                  @RequestParam String category) {
+                                  @RequestParam String category,
+                                  @RequestParam String email,
+                                  @RequestParam String password) {
         // @ResponseBody means the returned String is the response, not a view name
         // @RequestParam means it is a parameter from the GET or POST request
+        Account ac = LoginHandler.login(accountRepository, email, password);
+        if (ac == null) {
+            return LoginHandler.INVALID_CREDENTIALS;
+        }
 
-        Treatment t = new Treatment();
-        t.setName(name);
-        t.setDuration(duration);
-        t.setPrice(price);
-        t.setDescription(description);
-        t.setCategory(category);
-        t.setIsActive(true);
+        boolean hasPrivilege = false;
+        for (Role r : ac.getRoles()) { // Check if the user has the
+            //if (r.getName().equals(LoginHandler.Role.ADMIN.getName())) {
+            for (Privilege p : r.getPrivileges()) {
 
-        treatmentRepository.save(t);
-        return "Saved";
+                if (p.getName().equals(InitialDataLoader.CREATE_TREATMENT)) {
+                    hasPrivilege = true;
+                    break;
+                }
+            }
+        }
+        if (hasPrivilege) {
+            try {
+                Treatment t = new Treatment();
+                t.setName(name);
+                t.setDuration(duration);
+                t.setPrice(price);
+                t.setDescription(description);
+                t.setCategory(category);
+                t.setIsActive(true);
+
+                treatmentRepository.save(t);
+                return "Saved";
+            } catch (EmptyResultDataAccessException e) {
+                return "Treatment not found";
+            }
+        } else {
+            return "No privilege";
+        }
     }
 
     @ResponseBody
@@ -88,22 +111,42 @@ public class TreatmentController {
                                 @RequestParam int price,
                                 @RequestParam long duration,
                                 @RequestParam String description,
-                                @RequestParam String category) {
-        Treatment t = treatmentRepository.findOne(treatment);
-        if (t == null) {
-            return "Error";
+                                @RequestParam String category,
+                                @RequestParam String email,
+                                @RequestParam String password) {
+        Account ac = LoginHandler.login(accountRepository, email, password);
+        if (ac == null) {
+            return LoginHandler.INVALID_CREDENTIALS;
         }
-        if ((!treatmentName.isEmpty() && !treatmentName.equals(t.getName())) || price != t.getPrice() || duration != t.getDuration()) {
-            t.setIsActive(false);
-            t.setName(treatmentName + "_" + t.getTreatmentId());
-            treatmentRepository.save(t);
-            return addNewTreatment(treatmentName, price, duration, description, category);
-        } else {
-            t.setDescription(description);
-            t.setCategory(category);
-            treatmentRepository.save(t);
-            return "Treatment edited!";
+        boolean hasPrivilege = false;
+        for (Role r : ac.getRoles()) { // Check if the user has the
+            //if (r.getName().equals(LoginHandler.Role.ADMIN.getName())) {
+            for (Privilege p : r.getPrivileges()) {
+
+                if (p.getName().equals(InitialDataLoader.EDIT_TREATMENT)) {
+                    hasPrivilege = true;
+                    break;
+                }
+            }
         }
+        if (hasPrivilege) {
+            Treatment t = treatmentRepository.findOne(treatment);
+            if (t == null) {
+                return "Error";
+            }
+            if ((!treatmentName.isEmpty() && !treatmentName.equals(t.getName())) || price != t.getPrice() || duration != t.getDuration()) {
+                t.setIsActive(false);
+                t.setName(treatmentName + "_" + t.getTreatmentId());
+                treatmentRepository.save(t);
+                return addNewTreatment(treatmentName, price, duration, description, category, email, password);
+            } else {
+                t.setDescription(description);
+                t.setCategory(category);
+                treatmentRepository.save(t);
+                return "Treatment edited!";
+            }
+        }
+        return "Error";
     }
 
     //this method will probably not be used, as it's probably better to just gray out treatment if you don't wanna use it anymore
@@ -112,14 +155,14 @@ public class TreatmentController {
     public String deleteTreatment(@PathVariable(name = "treatment") Integer treatment,
                                   @RequestParam String email,
                                   @RequestParam String password) {
-        Account ac = new LoginHandler(accountRepository, roleRepository).login(email, password);
+        Account ac = LoginHandler.login(accountRepository, email, password);
         if (ac == null) {
-            return "Account not found";
+            return LoginHandler.INVALID_CREDENTIALS;
         }
         boolean hasPrivilege = false;
         for (Role r : ac.getRoles()) { // Check if the user has the
             //if (r.getName().equals(LoginHandler.Role.ADMIN.getName())) {
-            for (Privilege p : r.getPrivileges()){
+            for (Privilege p : r.getPrivileges()) {
 
                 if (p.getName().equals(InitialDataLoader.DELETE_TREATMENT)) {
                     hasPrivilege = true;

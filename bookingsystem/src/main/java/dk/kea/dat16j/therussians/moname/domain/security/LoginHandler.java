@@ -1,25 +1,16 @@
 package dk.kea.dat16j.therussians.moname.domain.security;
 
 import dk.kea.dat16j.therussians.moname.domain.entity.Account;
-import dk.kea.dat16j.therussians.moname.domain.entity.AdminAccount;
-import dk.kea.dat16j.therussians.moname.domain.entity.CustomerAccount;
 import dk.kea.dat16j.therussians.moname.domain.repository.AccountRepository;
-import dk.kea.dat16j.therussians.moname.domain.repository.RoleRepository;
 
 /**
  * Created by Chris on 18-May-17.
  */
 public class LoginHandler {
 
-    public LoginHandler(AccountRepository accountRepository, RoleRepository roleRepository) {
-        this.accountRepository = accountRepository;
-        this.roleRepository = roleRepository;
-    }
+    public static final String INVALID_CREDENTIALS = "Invalid credentials";
 
-    private AccountRepository accountRepository;
-    private RoleRepository roleRepository;
-
-    public Account login(String email, String password) {
+    public static Account login(AccountRepository accountRepository, String email, String password) {
         Account ac = accountRepository.findByEmail(email);
         if (ac == null) {
             return null; // TODO: 19-May-17 Consider throwing an error
@@ -44,8 +35,6 @@ public class LoginHandler {
             return a;
         }*/
         return ac;
-        //assert false:"Account has no roles";
-        //return null; // TODO: 19-May-17 Should it ever get here?
     }
 
     public static enum Role {
