@@ -1,5 +1,7 @@
 package dk.kea.dat16j.therussians.moname.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 import java.util.Collection;

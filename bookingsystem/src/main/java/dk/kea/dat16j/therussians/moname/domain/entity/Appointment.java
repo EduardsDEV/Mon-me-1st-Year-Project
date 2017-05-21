@@ -19,8 +19,6 @@ public class Appointment {
     private long appointmentId;
 
     @Column(name = "appointment_date")
-    //@JsonSerialize(using = LocalDateTimeSerializer.class)
-    //@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "UTC") JSON serialization problem
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @Convert(converter = LocalDateTimeAttributeConverter.class)
     private LocalDateTime dateAndTime;

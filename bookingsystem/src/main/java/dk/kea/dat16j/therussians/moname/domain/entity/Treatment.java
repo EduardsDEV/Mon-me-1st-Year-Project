@@ -15,6 +15,10 @@ public class Treatment {
     //@Column(name = "treatment_name",unique = true,nullable = false)
     //@GeneratedValue
     @Id
+    @Column(name = "treatment_id")
+    @GeneratedValue()
+    private int treatmentId;
+
     @Column(name = "treatment_name")
     private String name;
 
@@ -30,9 +34,29 @@ public class Treatment {
     @Column(name = "category")
     private String category; // TODO: 17-May-17 Make it an enumeration
 
+    @Column(name = "is_active")
+    private boolean isActive;
+
     @OneToMany(targetEntity = Appointment.class, mappedBy = "treatment", fetch = FetchType.LAZY)
     @JsonBackReference
     private List<Appointment> appointments;
+
+
+    public boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    public int getTreatmentId() {
+        return treatmentId;
+    }
+
+    public void setTreatmentId(int treatmentId) {
+        this.treatmentId = treatmentId;
+    }
 
     public String getName() {
         return name;
@@ -99,20 +123,21 @@ public class Treatment {
     }*/
 
     public enum Category {
-        UNKNOWN (),
-        MASSAGE ("massage"),
-        FACIAL ("facial"),
-        MAKEUP ("makeup"),
-        HAIR_REMOVAL ("hair_removal");
+        UNKNOWN(),
+        MASSAGE("massage"),
+        FACIAL("facial"),
+        MAKEUP("makeup"),
+        HAIR_REMOVAL("hair_removal");
 
         private final String name;
 
-        private Category(String s)
-        {
+        private Category(String s) {
             name = s.toLowerCase();
         }
 
-        private Category(){name = "";}
+        private Category() {
+            name = "";
+        }
 
         public boolean equalsName(String otherName) {
             // (otherName == null) check is not needed because name.equals(null) returns false

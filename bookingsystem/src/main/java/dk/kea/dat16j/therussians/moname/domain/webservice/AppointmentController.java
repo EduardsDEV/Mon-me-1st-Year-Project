@@ -1,6 +1,7 @@
 package dk.kea.dat16j.therussians.moname.domain.webservice;
 
 import dk.kea.dat16j.therussians.moname.domain.entity.Appointment;
+import dk.kea.dat16j.therussians.moname.domain.entity.Customer;
 import dk.kea.dat16j.therussians.moname.domain.entity.Treatment;
 import dk.kea.dat16j.therussians.moname.domain.repository.AppointmentRepository;
 import dk.kea.dat16j.therussians.moname.domain.repository.CustomerRepository;
@@ -15,7 +16,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,46 +42,90 @@ public class AppointmentController {
     @RequestMapping(path = "/add")
     public String addAppointment(@RequestParam(name = "datetime") String dateAndTime,
                                  @RequestParam(name = "customer") long customerId,
-                                 @RequestParam(name = "treatment") String treatmentName,
+                                 @RequestParam(name = "treatment") Integer treatment,
                                  @RequestParam(required = false) String comment) {
         LocalDateTime dateTime = LocalDateTime.parse(dateAndTime);
 
         // TODO: 18-May-17 Check for opening time
         // TODO: 18-May-17 Add extra time in between appointments
         // this part can be omitted at the end, as the web page shouldn't allow to choose such dates
-        if(dateTime.isBefore(LocalDateTime.now())){ // has one case to fail: after the customer chooses a desired time, he uses a lot of time to complete the registration
-            // consider adding 10 minutes extra to the current time
-            return "Choose a different time";
+        Treatment desiredTreatment = treatmentRepository.findOne(treatment);
+
+        boolean result = checkAvailableTime(dateTime, dateTime.plusMinutes(desiredTreatment.getDuration()));
+        if (result == true) {
+
+            Appointment newAppointment = new Appointment();
+            newAppointment.setDate(dateTime);
+            newAppointment.setComment(comment == null || comment.isEmpty() ? null : comment);
+            newAppointment.setCustomer(customerRepository.findOne(customerId));
+            newAppointment.setTreatment(desiredTreatment);
+
+            appointmentRepository.save(newAppointment);
+            return "Saved";
+        } else {
+            return "Choose different time";
         }
 
-        Treatment desiredTreatment = treatmentRepository.findOne(treatmentName);
-        List<Appointment> appointments = getAppointmentsForDate(dateTime.toLocalDate().toString());
+    }
 
-        LocalDateTime expectedEndTime = dateTime.plusMinutes(desiredTreatment.getDuration());
+    private boolean checkAvailableTime(LocalDateTime startingPoint, LocalDateTime endingPoint) {
+        if (startingPoint.isBefore(LocalDateTime.now(ZoneId.of("Europe/Paris")))) { // has one case to fail: after the customer chooses a desired time, he uses a lot of time to complete the registration
+            // consider adding 10 minutes extra to the current time
+            return false;
+        }
+
+        List<Appointment> appointments = getAppointmentsForDate(startingPoint.toLocalDate().toString());
 
         for (Appointment a : appointments) {
             LocalDateTime tempStartTime = a.getDateAndTime();
             LocalDateTime tempEndTime = a.getDateAndTime().plusMinutes(a.getTreatment().getDuration());
 
             // Check if end time is not in the middle of a different appointment
-            if (expectedEndTime.isAfter(tempStartTime) && expectedEndTime.isBefore(tempEndTime)) {
-                return "Choose a different hour";
+            if (endingPoint.isAfter(tempStartTime) && endingPoint.isBefore(tempEndTime)) {
+                return false;
             }
 
             // Check if start time is not in the middle of a different appointment
-            if (dateTime.isAfter(tempStartTime) && dateTime.isBefore(tempEndTime)/*start time shouldn't be before end time of a different appointment*/) {
-                return "Choose a different hour";
+            if (startingPoint.isAfter(tempStartTime) && startingPoint.isBefore(tempEndTime)/*start time shouldn't be before end time of a different appointment*/) {
+                return false;
             }
         }
 
-        Appointment newAppointment = new Appointment();
-        newAppointment.setDate(dateTime);
-        newAppointment.setComment(comment == null || comment.isEmpty() ? null : comment);
-        newAppointment.setCustomer(customerRepository.findOne(customerId));
-        newAppointment.setTreatment(desiredTreatment);
+        return true;
+    }
 
-        appointmentRepository.save(newAppointment);
-        return "Saved";
+    @ResponseBody
+    @RequestMapping(path = "/add-guest")
+    public String addGuestAppointment(@RequestParam(name = "datetime") String dateAndTime,
+                                      @RequestParam(name = "firstName") String firstName,
+                                      @RequestParam(name = "lastName") String lastName,
+                                      @RequestParam(name = "phoneNumber") String phoneNumber,
+                                      @RequestParam(name = "birthday", required = false) String birthday,
+                                      @RequestParam(name = "treatment") Integer treatment,
+                                      @RequestParam(required = false) String comment) {
+
+        LocalDateTime dateTime = LocalDateTime.parse(dateAndTime);
+        Customer c = new Customer();
+        c.setFirstName(firstName);
+        c.setLastName(lastName);
+        c.setPhoneNumber(phoneNumber);
+        c.setBirthday((birthday == null || birthday.isEmpty() ? null : LocalDate.parse(birthday)));
+
+        Treatment desiredTreatment = treatmentRepository.findOne(treatment);
+        boolean result = checkAvailableTime(dateTime, dateTime.plusMinutes(desiredTreatment.getDuration()));
+        if (result == true) {
+
+            Appointment newGuestAppointment = new Appointment();
+            newGuestAppointment.setDate(dateTime);
+            newGuestAppointment.setCustomer(c);
+            newGuestAppointment.setTreatment(desiredTreatment);
+            newGuestAppointment.setComment(comment == null || comment.isEmpty() ? null : comment);
+
+            appointmentRepository.save(newGuestAppointment);
+            return "Saved";
+        } else {
+            return "Choose different time";
+        }
     }
 
     @ResponseBody
@@ -103,7 +147,7 @@ public class AppointmentController {
     public String editAppointment(@PathVariable(name = "appointmentId") long appointmentId,
                                   @RequestParam(name = "datetime") String dateAndTime,
                                   @RequestParam(name = "customer") long customerId,
-                                  @RequestParam(name = "treatment") String treatmentName,
+                                  @RequestParam(name = "treatment") Integer treatment,
                                   @RequestParam(required = false) String comment) {
 
         Appointment appointment = new Appointment();
@@ -112,7 +156,7 @@ public class AppointmentController {
         appointment.setDate(LocalDateTime.parse(dateAndTime));
         appointment.setComment(comment == null || comment.isEmpty() ? null : comment);
         appointment.setCustomer(customerRepository.findOne(customerId));
-        appointment.setTreatment(treatmentRepository.findOne(treatmentName));
+        appointment.setTreatment(treatmentRepository.findOne(treatment));
 
         appointmentRepository.save(appointment);
 
