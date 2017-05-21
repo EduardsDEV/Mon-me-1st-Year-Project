@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by Chris on 07-May-17.
@@ -33,7 +37,8 @@ public class TreatmentController {
     public String addNewTreatment(@RequestParam String name,
                                   @RequestParam float price,
                                   @RequestParam long duration,
-                                  @RequestParam String description) {
+                                  @RequestParam String description,
+                                  @RequestParam String category) {
         // @ResponseBody means the returned String is the response, not a view name
         // @RequestParam means it is a parameter from the GET or POST request
 
@@ -42,6 +47,8 @@ public class TreatmentController {
         t.setDuration(duration);
         t.setPrice(price);
         t.setDescription(description);
+        t.setCategory(category);
+        t.setIsActive(true);
 
         treatmentRepository.save(t);
         return "Saved";
@@ -50,44 +57,73 @@ public class TreatmentController {
     @ResponseBody
     @RequestMapping(path = "/all", method = RequestMethod.GET)
     public Iterable<Treatment> getAllTreatments() {
-        // This returns a JSON or XML with the treatments
-        return treatmentRepository.findAll();
+        // This returns a JSON with the treatments
+        List<Treatment> treatments = new LinkedList<>();
+        Iterator<Treatment> it = treatmentRepository.findAll().iterator();
+        while (it.hasNext()) {
+            Treatment t = it.next();
+            if (t.getIsActive()) {
+                treatments.add(t);
+            }
+        }
+        return treatments;
     }
 
     @RequestMapping(path = "/{treatment}/edit")
     @ResponseBody
-    public String editTreatment(@PathVariable(name = "treatment") String treatment,
-                                @RequestParam float price,
+    public String editTreatment(@PathVariable(name = "treatment") Integer treatment,
+                                @RequestParam String treatmentName,
+                                @RequestParam int price,
                                 @RequestParam long duration,
-                                @RequestParam String description ){
+                                @RequestParam String description,
+                                @RequestParam String category) {
         Treatment t = treatmentRepository.findOne(treatment);
-        if(t == null){
+        if (t == null) {
             return "Error";
         }
-        t.setPrice(price);
-        t.setDuration(duration);
-        t.setDescription(description);
 
-        treatmentRepository.save(t);
-        return "Treatment edited!";
+        if ((!treatmentName.isEmpty() && !treatmentName.equals(t.getName())) || price != t.getPrice() || duration != t.getDuration()) {
+            t.setIsActive(false);
+            t.setName(treatmentName + "_" + t.getTreatmentId());
+            treatmentRepository.save(t);
+            return addNewTreatment(treatmentName, price, duration, description, category);
+        } else {
+            t.setDescription(description);
+            t.setCategory(category);
+            treatmentRepository.save(t);
+            return "Treatment edited!";
+        }
     }
 
     //this method will probably not be used, as it's probably better to just gray out treatment if you don't wanna use it anymore
     @RequestMapping(path = "/{treatment}/delete")
     @ResponseBody
-    public String deleteTreatment(@PathVariable(name = "treatment") String treatment){
-        try{
-            treatmentRepository.delete(treatment);
-            return "Treatment deleted!";
-        } catch(Exception e){e.printStackTrace();}
-        return "Error";
+    public String deleteTreatment(@PathVariable(name = "treatment") Integer treatment) {
+        Treatment t = treatmentRepository.findOne(treatment);
+        t.setIsActive(false);
+        t.setName(t.getName() + "_" + t.getTreatmentId());
+        treatmentRepository.save(t);
+        return "Treatment deleted!";
     }
 
     @RequestMapping(method = RequestMethod.GET)
     public void getFile(
             HttpServletResponse response) throws IOException {
-        String src= "src/main/resources/templates/treatments.html";
+        String src = "src/main/resources/templates/treatments.html";
         HtmlFileLoad.loadPage(response, src);
     }
 
+    @ResponseBody
+    @RequestMapping(path = "/{category}/all", method = RequestMethod.GET)
+    public Iterable<Treatment> getTreatmentsByCategory(@PathVariable(name = "category") String category) {
+        List<Treatment> temp = new ArrayList<>();
+        Iterator<Treatment> it = treatmentRepository.findAll().iterator();
+        while (it.hasNext()) {
+            Treatment treatment = it.next();
+            if (treatment.getIsActive() && treatment.getCategory().equals(category)) {
+                temp.add(treatment);
+            }
+        }
+        return temp;
+    }
 }

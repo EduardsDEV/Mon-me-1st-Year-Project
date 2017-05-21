@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
  * Created by Chris on 07-May-17.
  */
 @Repository
-public interface TreatmentRepository extends CrudRepository<Treatment, String>{
+public interface TreatmentRepository extends CrudRepository<Treatment, Integer>{
 }
