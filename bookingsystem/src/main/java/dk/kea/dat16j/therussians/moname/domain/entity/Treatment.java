@@ -28,7 +28,7 @@ public class Treatment {
     private String description;
 
     @Column(name = "category")
-    private String category; // TODO: 17-May-17 Make it an enumaration 
+    private String category; // TODO: 17-May-17 Make it an enumeration
 
     @OneToMany(targetEntity = Appointment.class, mappedBy = "treatment", fetch = FetchType.LAZY)
     @JsonBackReference
