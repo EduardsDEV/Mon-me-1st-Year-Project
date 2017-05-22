@@ -65,7 +65,6 @@ public class CustomerAccountController {
                                       @RequestParam String password,
                                       @RequestParam String newEmail,
                                       @RequestParam String newPassword) {
-        assert false:"I am here";
         Account ac = LoginHandler.login(accountRepository, email, password);
         CustomerAccount temp;
         if (ac != null && ac instanceof CustomerAccount) {

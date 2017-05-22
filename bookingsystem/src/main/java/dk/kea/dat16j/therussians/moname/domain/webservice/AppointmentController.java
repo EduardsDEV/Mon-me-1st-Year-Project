@@ -214,13 +214,18 @@ public class AppointmentController {
             if(a == null){
                 return "Error";
             }else{
-                a.setDate(LocalDateTime.parse(dateAndTime));
+                //appointmentRepository.delete(appointmentId);
+                LocalDateTime dateTime = LocalDateTime.parse(dateAndTime);
+                a.setDate(dateTime);
                 a.setComment(comment == null || comment.isEmpty() ? null : comment);
                 a.setCustomer(customerRepository.findOne(customerId));
                 a.setTreatment(treatmentRepository.findOne(treatment));
-
-                appointmentRepository.save(a);
-                return "Edited";
+                if (checkAvailableTime(dateTime, dateTime.plusMinutes(a.getTreatment().getDuration()))) {
+                    appointmentRepository.save(a);
+                    return "Edited";
+                } else {
+                    return "Choose different time";
+                }
             }
         }
         return"No privileges";
@@ -260,7 +265,7 @@ public class AppointmentController {
     @ResponseBody
     @RequestMapping(method = RequestMethod.GET)
     public void loadPage(HttpServletResponse response) throws IOException {
-        String src = "src/main/resources/templates/appointments.html";
+        String src = "src/main/resources/templates/booking.html";
         HtmlFileLoad.loadPage(response, src);
     }
 }
