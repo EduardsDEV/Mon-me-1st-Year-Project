@@ -22,24 +22,23 @@
                     var makeupList = "";
                     for (var i = 0; i < data.length; i++) {
                         var categoryId = data[i].category;
+                        var row = "<p align='center'><b>Name: </b>" + data[i].name + "&nbsp;&nbsp;&nbsp;&nbsp;<b>Price:</b> " + data[i].price + " dkk " +
+                            "&nbsp;&nbsp;&nbsp;&nbsp;<b>Duration:</b> " + data[i].duration + " minutes <br>";
+                        row += data[i].description + "</p>";
                         if(categoryId == "massage"){
-                            massageList += "<p align='center'>" + data[i].name + "&nbsp;&nbsp;&nbsp;&nbsp;Price: " + data[i].price + " dkk " + "&nbsp;&nbsp;&nbsp;&nbsp;Duration: " + data[i].duration + " minutes <br>";
-                            massageList += data[i].description + "</p>";
+                            massageList += row;
                             continue;
                         }
                         if(categoryId == "hair_removal"){
-                            hairRemovalList += "<p align='center'>" + data[i].name + "&nbsp;&nbsp;&nbsp;&nbsp;Price: " + data[i].price + " dkk " + "&nbsp;&nbsp;&nbsp;&nbsp;Duration: " + data[i].duration + " minutes <br>";
-                            hairRemovalList += data[i].description + "</p>";
+                            hairRemovalList += row;
                             continue;
                         }
                         if(categoryId == "facial"){
-                            facialList += "<p align='center'>" + data[i].name + "&nbsp;&nbsp;&nbsp;&nbsp;Price: " + data[i].price + " dkk " + "&nbsp;&nbsp;&nbsp;&nbsp;Duration: " + data[i].duration + " minutes <br>";
-                            facialList += data[i].description + "</p>";
+                            facialList += row;
                             continue;
                         }
                         if(categoryId == "makeup"){
-                            makeupList += "<p align='center'>" + data[i].name + "&nbsp;&nbsp;&nbsp;&nbsp;Price: " + data[i].price + " dkk " + "&nbsp;&nbsp;&nbsp;&nbsp;Duration: " + data[i].duration + " minutes <br>";
-                            makeupList += data[i].description + "</p>";
+                            makeupList += row;
                         }
                     }
                     $("#massage").append(massageList);
