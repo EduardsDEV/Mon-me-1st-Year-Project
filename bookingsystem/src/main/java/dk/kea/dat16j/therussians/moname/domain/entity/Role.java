@@ -8,6 +8,8 @@ import java.util.Collection;
 /**
  * Created by Chris on 18-May-17.
  */
+// Code taken from http://www.baeldung.com/role-and-privilege-for-spring-security-registration
+// and adapted to our project
 @Entity
 @Table(name = "roles")
 public class Role {

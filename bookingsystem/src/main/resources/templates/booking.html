@@ -1,49 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8">
     <title>mon &acirc;me - Hudplejklinik v/ Frida Sandberg</title>
-    <link href="css/booking.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="css/bootstrap.min.css">
-  </head>
-  <body>
+    <link href="css/tabStyle.css" rel="stylesheet" type="text/css">
 
-    <header>
-      <!-- navigation bar -->
-      <nav class="navbar transparent navbar-inverse">
-          <div class="container">
-              <!-- Logo -->
-              <div class="navbar-header">
-                  <a href="index.html" class="navbar-brand" id="logo">Mon &Acirc;me</a>
-              </div>
+    <!-- Used for making an url request to the Java application-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
-              <!-- Menu Items aligned right-->
-              <div class="collapse navbar-collapse">
-                  <ul class="nav navbar-nav navbar-right" id="list">
-                      <li><a href="http://localhost:8080">HOME</a></li>
-                      <li><a href="http://localhost:8080/treatments">TREATMENTS</a></li>
-                      <li><a href="http://localhost:8080/appointments">BOOKING</a></li>
-                  </ul>
-              </div>
-          </div>
-          <div class="container">
-            <ul class="nav nav-tabs">
-              <li role="presentation" class="active"><a href="#">Category 1</a></li>
-              <li role="presentation"><a href="#">Category 2</a></li>
-              <li role="presentation"><a href="#">Category 3</a></li>
-              <li role="presentation"><a href="#">Category 4</a></li>
-            </ul>
-          </div>
-      </nav>
-    </header>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.ajax({
+                url: "http://localhost:8080/treatments/all",
+                method: "GET",
+                dataType: "json",
+                success: function (data) {
+                    var massageList = "";
+                    var hairRemovalList = "";
+                    var facialList = "";
+                    var makeupList = "";
+                    for (var i = 0; i < data.length; i++) {
+                        var categoryId = data[i].category;
+                        if(categoryId == "massage"){
+                            massageList += "<p align='center'>" + data[i].name + "&nbsp;&nbsp;&nbsp;&nbsp;Price: " + data[i].price + " dkk " + "&nbsp;&nbsp;&nbsp;&nbsp;Duration: " + data[i].duration + " minutes <br>";
+                            massageList += data[i].description + "</p>";
+                            continue;
+                        }
+                        if(categoryId == "hair_removal"){
+                            hairRemovalList += "<p align='center'>" + data[i].name + "&nbsp;&nbsp;&nbsp;&nbsp;Price: " + data[i].price + " dkk " + "&nbsp;&nbsp;&nbsp;&nbsp;Duration: " + data[i].duration + " minutes <br>";
+                            hairRemovalList += data[i].description + "</p>";
+                            continue;
+                        }
+                        if(categoryId == "facial"){
+                            facialList += "<p align='center'>" + data[i].name + "&nbsp;&nbsp;&nbsp;&nbsp;Price: " + data[i].price + " dkk " + "&nbsp;&nbsp;&nbsp;&nbsp;Duration: " + data[i].duration + " minutes <br>";
+                            facialList += data[i].description + "</p>";
+                            continue;
+                        }
+                        if(categoryId == "makeup"){
+                            makeupList += "<p align='center'>" + data[i].name + "&nbsp;&nbsp;&nbsp;&nbsp;Price: " + data[i].price + " dkk " + "&nbsp;&nbsp;&nbsp;&nbsp;Duration: " + data[i].duration + " minutes <br>";
+                            makeupList += data[i].description + "</p>";
+                        }
+                    }
+                    $("#massage").append(massageList);
+                    $("#hair_removal").append(hairRemovalList);
+                    $("#facial").append(facialList);
+                    $("#makeup").append(makeupList);
+                    console.log(data);
+                }
+            });
+        })
+    </script>
+</head>
+<body>
 
-    <footer class="navbar-fixed-bottom">
-      <p class="text-right">
+<header>
+    <!-- navigation bar -->
+    <nav class="navbar transparent navbar-inverse">
+        <div class="container">
+            <!-- Logo -->
+            <div class="navbar-header">
+                <a href="http://localhost:8080" class="navbar-brand" id="logo">Mon &Acirc;me</a>
+            </div>
+
+            <!-- Menu Items aligned right-->
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav navbar-right" id="list">
+                    <li><a href="http://localhost:8080">HOME</a></li>
+                    <li><a href="http://localhost:8080/treatments">TREATMENTS</a></li>
+                    <li><a href="http://localhost:8080/appointments">BOOKING</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="tab">
+            <button class="tablinks" onclick="openTab(event, 'massage')">Massage</button>
+            <button class="tablinks" onclick="openTab(event, 'hair_removal')">Hair removal</button>
+            <button class="tablinks" onclick="openTab(event, 'facial')">Facial</button>
+            <button class="tablinks" onclick="openTab(event, 'makeup')">Makeup</button>
+        </div>
+    </nav>
+</header>
+
+<div>
+    <div id="massage" class="tabcontent" style="display: block;"></div>
+    <div id="hair_removal" class="tabcontent"></div>
+    <div id="facial" class="tabcontent"></div>
+    <div id="makeup" class="tabcontent"></div>
+</div>
+
+<footer class="navbar-fixed-bottom">
+    <p class="text-right">
         <button type="button" class="btn btn-default">NEXT</button>
-      </p>
-    </footer>
+    </p>
+</footer>
 
-  <script src="js/jquery-3.2.1.min.js"></script>
-  <script src="js/bootstrap.min.js"></script>
-  </body>
+<script src="js/jquery-3.2.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/tabopener.js" type="text/javascript"></script>
+</body>
 </html>

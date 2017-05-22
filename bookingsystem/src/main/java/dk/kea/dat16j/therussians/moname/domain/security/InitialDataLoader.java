@@ -8,7 +8,6 @@ import dk.kea.dat16j.therussians.moname.domain.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +17,8 @@ import java.util.Collection;
 /**
  * Created by Chris on 18-May-17.
  */
+// Code taken from http://www.baeldung.com/role-and-privilege-for-spring-security-registration
+// and adapted to our project
 @Component
 public class InitialDataLoader implements
         ApplicationListener<ContextRefreshedEvent> {
