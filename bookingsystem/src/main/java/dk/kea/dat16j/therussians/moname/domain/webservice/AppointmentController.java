@@ -1,13 +1,12 @@
 package dk.kea.dat16j.therussians.moname.domain.webservice;
 
-import dk.kea.dat16j.therussians.moname.domain.entity.Appointment;
-import dk.kea.dat16j.therussians.moname.domain.entity.Customer;
-import dk.kea.dat16j.therussians.moname.domain.entity.Treatment;
-import dk.kea.dat16j.therussians.moname.domain.repository.AppointmentRepository;
-import dk.kea.dat16j.therussians.moname.domain.repository.CustomerRepository;
-import dk.kea.dat16j.therussians.moname.domain.repository.TreatmentRepository;
+import dk.kea.dat16j.therussians.moname.domain.entity.*;
+import dk.kea.dat16j.therussians.moname.domain.repository.*;
+import dk.kea.dat16j.therussians.moname.domain.security.InitialDataLoader;
+import dk.kea.dat16j.therussians.moname.domain.security.LoginHandler;
 import dk.kea.dat16j.therussians.moname.technicalservices.HtmlFileLoad;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,12 +27,15 @@ import java.util.List;
 public class AppointmentController {
 
     @Autowired
-    public AppointmentController(AppointmentRepository appointmentRepository, CustomerRepository customerRepository, TreatmentRepository treatmentRepository) {
+    public AppointmentController(AppointmentRepository appointmentRepository, CustomerRepository customerRepository, TreatmentRepository treatmentRepository, AccountRepository accountRepository) {
         this.appointmentRepository = appointmentRepository;
         this.customerRepository = customerRepository;
         this.treatmentRepository = treatmentRepository;
+        this.accountRepository = accountRepository;
+
     }
 
+    private AccountRepository accountRepository;
     private AppointmentRepository appointmentRepository;
     private CustomerRepository customerRepository;
     private TreatmentRepository treatmentRepository;
@@ -43,29 +45,46 @@ public class AppointmentController {
     public String addAppointment(@RequestParam(name = "datetime") String dateAndTime,
                                  @RequestParam(name = "customer") long customerId,
                                  @RequestParam(name = "treatment") Integer treatment,
-                                 @RequestParam(required = false) String comment) {
+                                 @RequestParam(required = false) String comment,
+                                 @RequestParam String email,
+                                 @RequestParam String password) {
         LocalDateTime dateTime = LocalDateTime.parse(dateAndTime);
-
-        // TODO: 18-May-17 Check for opening time
-        // TODO: 18-May-17 Add extra time in between appointments
-        // this part can be omitted at the end, as the web page shouldn't allow to choose such dates
-        Treatment desiredTreatment = treatmentRepository.findOne(treatment);
-
-        boolean result = checkAvailableTime(dateTime, dateTime.plusMinutes(desiredTreatment.getDuration()));
-        if (result == true) {
-
-            Appointment newAppointment = new Appointment();
-            newAppointment.setDate(dateTime);
-            newAppointment.setComment(comment == null || comment.isEmpty() ? null : comment);
-            newAppointment.setCustomer(customerRepository.findOne(customerId));
-            newAppointment.setTreatment(desiredTreatment);
-
-            appointmentRepository.save(newAppointment);
-            return "Saved";
-        } else {
-            return "Choose different time";
+        Account ac = LoginHandler.login(accountRepository, email, password);
+        if (ac == null) {
+            return LoginHandler.INVALID_CREDENTIALS;
         }
+        boolean hasPrivilege = false;
+        for (Role r : ac.getRoles()) {
+            for (Privilege p : r.getPrivileges()) {
+                if (p.getName().equals(InitialDataLoader.CREATE_APPOINTMENT)) {
+                    hasPrivilege = true;
+                    break;
+                }
+            }
+        }
+        if (hasPrivilege) {
+            try {
+                Treatment desiredTreatment = treatmentRepository.findOne(treatment);
 
+                boolean result = checkAvailableTime(dateTime, dateTime.plusMinutes(desiredTreatment.getDuration()));
+                if (result == true) {
+
+                    Appointment newAppointment = new Appointment();
+                    newAppointment.setDate(dateTime);
+                    newAppointment.setComment(comment == null || comment.isEmpty() ? null : comment);
+                    newAppointment.setCustomer(customerRepository.findOne(customerId));
+                    newAppointment.setTreatment(desiredTreatment);
+
+                    appointmentRepository.save(newAppointment);
+                } else {
+                    return "Choose different time";
+                }
+            } catch (EmptyResultDataAccessException e) {
+                return "Treatment not found";
+            }
+            return "Saved";
+        }
+        return "No privilege";
     }
 
     private boolean checkAvailableTime(LocalDateTime startingPoint, LocalDateTime endingPoint) {
@@ -111,6 +130,7 @@ public class AppointmentController {
         c.setPhoneNumber(phoneNumber);
         c.setBirthday((birthday == null || birthday.isEmpty() ? null : LocalDate.parse(birthday)));
 
+
         Treatment desiredTreatment = treatmentRepository.findOne(treatment);
         boolean result = checkAvailableTime(dateTime, dateTime.plusMinutes(desiredTreatment.getDuration()));
         if (result == true) {
@@ -136,11 +156,33 @@ public class AppointmentController {
 
     @ResponseBody
     @RequestMapping(path = "/{appointment}/delete")
-    public String deleteAppointment(@PathVariable(name = "appointment") long appointmentId) {
-        appointmentRepository.delete(appointmentId);
-        // TODO: 16-May-17 Check if appointment is deleted from Customer's list and Treatment's list
-        return "Deleted";
+    public String deleteAppointment(@PathVariable(name = "appointment") long appointmentId,
+                                    @RequestParam String email,
+                                    @RequestParam String password) {
+        Account ac = LoginHandler.login(accountRepository, email, password );
+        if(ac == null){
+            return LoginHandler.INVALID_CREDENTIALS;
+        }
+        boolean hasPrivilege = false;
+        for(Role r : ac.getRoles()){
+            for(Privilege p : r.getPrivileges()){
+                if(p.getName().equals(InitialDataLoader.DELETE_APPOINTMENT)){
+                    hasPrivilege = true;
+                    break;
+                }
+            }
+        }
+        if(hasPrivilege) {
+            Appointment appointment = appointmentRepository.findOne(appointmentId);
+            appointmentRepository.delete(appointment);
+            return "Appointment Deleted";
+        }else{
+            return "No Privileges";
+        }
+
     }
+    // TODO: 16-May-17 Check if appointment is deleted from Customer's list and Treatment's list
+
 
     @ResponseBody
     @RequestMapping(path = "/{appointmentId}/edit")
@@ -148,19 +190,40 @@ public class AppointmentController {
                                   @RequestParam(name = "datetime") String dateAndTime,
                                   @RequestParam(name = "customer") long customerId,
                                   @RequestParam(name = "treatment") Integer treatment,
-                                  @RequestParam(required = false) String comment) {
+                                  @RequestParam(required = false) String comment,
+                                  @RequestParam String email,
+                                  @RequestParam String password){
+        Account ac = LoginHandler.login(accountRepository, email, password);
+        if(ac == null){
+           return LoginHandler.INVALID_CREDENTIALS;
+        }
+        boolean hasPrivilege = false;
+        // TODO: 5/22/2017 Check if the appointment belongs to the customer
+        // TODO: 5/22/2017 Do so that the checkAvailable doesn't interfer with this appointment
+        for(Role r : ac.getRoles()){
+            for(Privilege p : r.getPrivileges()){
 
-        Appointment appointment = new Appointment();
+                if(p.getName().equals(InitialDataLoader.EDIT_APPOINTMENT)){
+                    hasPrivilege = true;
+                    break;
+                }
+            }
+        }
+        if(hasPrivilege){
+            Appointment a = appointmentRepository.findOne(appointmentId);
+            if(a == null){
+                return "Error";
+            }else{
+                a.setDate(LocalDateTime.parse(dateAndTime));
+                a.setComment(comment == null || comment.isEmpty() ? null : comment);
+                a.setCustomer(customerRepository.findOne(customerId));
+                a.setTreatment(treatmentRepository.findOne(treatment));
 
-        appointment.setAppointmentId(appointmentId);
-        appointment.setDate(LocalDateTime.parse(dateAndTime));
-        appointment.setComment(comment == null || comment.isEmpty() ? null : comment);
-        appointment.setCustomer(customerRepository.findOne(customerId));
-        appointment.setTreatment(treatmentRepository.findOne(treatment));
-
-        appointmentRepository.save(appointment);
-
-        return "Edited";
+                appointmentRepository.save(a);
+                return "Edited";
+            }
+        }
+        return"No privileges";
     }
 
     // Finds all appointments for a specific date
