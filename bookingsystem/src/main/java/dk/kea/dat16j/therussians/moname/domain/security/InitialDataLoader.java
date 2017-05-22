@@ -41,13 +41,11 @@ public class InitialDataLoader implements
 
     private RoleRepository roleRepository;
     private PrivilegeRepository privilegeRepository;
-    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public InitialDataLoader(RoleRepository roleRepository, PrivilegeRepository privilegeRepository, PasswordEncoder passwordEncoder) {
+    public InitialDataLoader(RoleRepository roleRepository, PrivilegeRepository privilegeRepository) {
         this.roleRepository = roleRepository;
         this.privilegeRepository = privilegeRepository;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @Override

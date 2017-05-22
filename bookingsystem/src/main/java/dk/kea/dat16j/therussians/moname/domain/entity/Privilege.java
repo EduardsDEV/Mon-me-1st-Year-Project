@@ -15,7 +15,7 @@ public class Privilege {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     //@Column(name = "privilege_id")
-    private Long id;
+    private long id;
 
     @Column(name = "privilege_name")
     private String name;
