@@ -53,15 +53,7 @@ public class AppointmentController {
         if (ac == null) {
             return LoginHandler.INVALID_CREDENTIALS;
         }
-        boolean hasPrivilege = false;
-        for (Role r : ac.getRoles()) {
-            for (Privilege p : r.getPrivileges()) {
-                if (p.getName().equals(InitialDataLoader.CREATE_APPOINTMENT)) {
-                    hasPrivilege = true;
-                    break;
-                }
-            }
-        }
+        boolean hasPrivilege = LoginHandler.hasPrivilege(ac, InitialDataLoader.CREATE_APPOINTMENT);
         if (hasPrivilege) {
             try {
                 Treatment desiredTreatment = treatmentRepository.findOne(treatment);
@@ -134,7 +126,7 @@ public class AppointmentController {
         Treatment desiredTreatment = treatmentRepository.findOne(treatment);
         boolean result = checkAvailableTime(dateTime, dateTime.plusMinutes(desiredTreatment.getDuration()));
         if (result == true) {
-
+            c = customerRepository.save(c);
             Appointment newGuestAppointment = new Appointment();
             newGuestAppointment.setDate(dateTime);
             newGuestAppointment.setCustomer(c);
@@ -163,15 +155,7 @@ public class AppointmentController {
         if(ac == null){
             return LoginHandler.INVALID_CREDENTIALS;
         }
-        boolean hasPrivilege = false;
-        for(Role r : ac.getRoles()){
-            for(Privilege p : r.getPrivileges()){
-                if(p.getName().equals(InitialDataLoader.DELETE_APPOINTMENT)){
-                    hasPrivilege = true;
-                    break;
-                }
-            }
-        }
+        boolean hasPrivilege = LoginHandler.hasPrivilege(ac, InitialDataLoader.DELETE_APPOINTMENT);
         if(hasPrivilege) {
             Appointment appointment = appointmentRepository.findOne(appointmentId);
             appointmentRepository.delete(appointment);
@@ -197,18 +181,9 @@ public class AppointmentController {
         if(ac == null){
            return LoginHandler.INVALID_CREDENTIALS;
         }
-        boolean hasPrivilege = false;
+        boolean hasPrivilege = LoginHandler.hasPrivilege(ac, InitialDataLoader.EDIT_APPOINTMENT);
         // TODO: 5/22/2017 Check if the appointment belongs to the customer
         // TODO: 5/22/2017 Do so that the checkAvailable doesn't interfer with this appointment
-        for(Role r : ac.getRoles()){
-            for(Privilege p : r.getPrivileges()){
-
-                if(p.getName().equals(InitialDataLoader.EDIT_APPOINTMENT)){
-                    hasPrivilege = true;
-                    break;
-                }
-            }
-        }
         if(hasPrivilege){
             Appointment a = appointmentRepository.findOne(appointmentId);
             if(a == null){

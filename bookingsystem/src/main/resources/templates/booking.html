@@ -22,21 +22,21 @@
                     var makeupList = "";
                     for (var i = 0; i < data.length; i++) {
                         var categoryId = data[i].category;
-                        var row = "<li><b>Name: </b>" + data[i].name + "&nbsp;&nbsp;&nbsp;&nbsp;<b>Price:</b> " + data[i].price + " dkk " +
-                            "&nbsp;&nbsp;&nbsp;&nbsp;<b>Duration:</b> " + data[i].duration + " minutes</li>";
-                        if(categoryId == "massage"){
+                        var row = "<input type='radio' name='category' value='" + data[i].treatmentId + "'>" + "<b>Name: </b>" + data[i].name + "&nbsp;&nbsp;&nbsp;&nbsp;<b>Price:</b> " + data[i].price + " dkk " +
+                            "&nbsp;&nbsp;&nbsp;&nbsp;<b>Duration:</b> " + data[i].duration + " minutes </br>";
+                        if (categoryId == "massage") {
                             massageList += row;
                             continue;
                         }
-                        if(categoryId == "hair_removal"){
+                        if (categoryId == "hair_removal") {
                             hairRemovalList += row;
                             continue;
                         }
-                        if(categoryId == "facial"){
+                        if (categoryId == "facial") {
                             facialList += row;
                             continue;
                         }
-                        if(categoryId == "makeup"){
+                        if (categoryId == "makeup") {
                             makeupList += row;
                         }
                     }
@@ -51,49 +51,99 @@
     </script>
 </head>
 <body>
-
-<header>
-    <!-- navigation bar -->
-    <nav class="navbar transparent navbar-inverse">
-        <div class="container">
-            <!-- Logo -->
-            <div class="navbar-header">
-                <a href="http://localhost:8080" class="navbar-brand" id="logo">Mon &Acirc;me</a>
-            </div>
-
-            <!-- Menu Items aligned right-->
-            <div class="collapse navbar-collapse">
-                <ul class="nav navbar-nav navbar-right" id="list">
-                    <li><a href="http://localhost:8080">HOME</a></li>
-                    <li><a href="http://localhost:8080/treatments">TREATMENTS</a></li>
-                    <li><a href="http://localhost:8080/appointments">BOOKING</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="tab">
-            <button class="tablinks" onclick="openTab(event, 'massage')">Massage</button>
-            <button class="tablinks" onclick="openTab(event, 'hair_removal')">Hair removal</button>
-            <button class="tablinks" onclick="openTab(event, 'facial')">Facial</button>
-            <button class="tablinks" onclick="openTab(event, 'makeup')">Makeup</button>
-        </div>
-    </nav>
-</header>
-
 <div>
-    <ul id="massage" class="tabcontent" style="display: block;"></ul>
-    <ul id="hair_removal" class="tabcontent"></ul>
-    <ul id="facial" class="tabcontent"></ul>
-    <ul id="makeup" class="tabcontent"></ul>
+    <header>
+        <!-- navigation bar -->
+        <nav class="navbar transparent navbar-inverse">
+            <div class="container">
+                <!-- Logo -->
+                <div class="navbar-header">
+                    <a href="http://localhost:8080" class="navbar-brand" id="logo">Mon &Acirc;me</a>
+                </div>
+
+                <!-- Menu Items aligned right-->
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right" id="list">
+                        <li><a href="http://localhost:8080">HOME</a></li>
+                        <li><a href="http://localhost:8080/treatments">TREATMENTS</a></li>
+                        <li><a href="http://localhost:8080/appointments">BOOKING</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="tab">
+                <button class="tablinks" onclick="openTab(event, 'massage')">Massage</button>
+                <button class="tablinks" onclick="openTab(event, 'hair_removal')">Hair removal</button>
+                <button class="tablinks" onclick="openTab(event, 'facial')">Facial</button>
+                <button class="tablinks" onclick="openTab(event, 'makeup')">Makeup</button>
+            </div>
+        </nav>
+    </header>
+    <div>
+        <form id="treatmentInput">
+            <div id="massage" class="tabcontent btn-group" style="display: block;" data-toggle="buttons"></div>
+            <div id="hair_removal" class="tabcontent btn-group" data-toggle="buttons"></div>
+            <div id="facial" class="tabcontent" data-toggle="buttons"></div>
+            <div id="makeup" class="tabcontent" data-toggle="buttons"></div>
+        </form>
+    </div>
+
+    <script>function openNext() {
+        var id = $('input[name=category]:checked', '#treatmentInput').val();
+        if (id != 'on' && id > 0) {
+            selectTreatment(id);
+            openTab(event, 'customerInfo');
+        } else {
+            alert("select treatment first");
+        }
+    }</script>
+
+    <footer class="navbar-fixed-bottom">
+        <p class="text-right"><!-- alert($('input[name=category]:checked', '#treatmentInput').val())-->
+            <button type="button" class="btn btn-primary"
+                    onclick="openNext()">NEXT
+            </button>
+        </p>
+    </footer>
 </div>
 
-<footer class="navbar-fixed-bottom">
-    <p class="text-right">
-        <button type="button" class="btn btn-default">NEXT</button>
-    </p>
-</footer>
+<div class="tabcontent" id="customerInfo">
+    <h1 align="center">Customer information</h1>
+    Sign in as a guest<br>
+    Name: <input title="name" type="text" id="guestFName"><br><br>
+    Surname: <input title="surname" type="text" id="guestLName"><br><br>
+    Birthday: <input title="birthday" type="date" id="guestBirthday"><br><br>
+    Phone number: <input title="phone" type="text" id="guestPhone"><br><br>
+
+    <script>function guestInfoSubmit() {
+        var fName = document.getElementById("guestFName").value;
+        var lName = document.getElementById("guestLName").value;
+        var birthday = document.getElementById("guestBirthday").value;
+        var phoneNumber = document.getElementById("guestPhone").value;
+        console.log(fName);
+        console.log(lName);
+        console.log(birthday);
+        console.log(phoneNumber);
+        addAppointment("2017-12-23T12:00", fName, lName, phoneNumber, "", "random comment");
+        }</script>
+
+    <button onclick="guestInfoSubmit()">SUBMIT</button>
+    <br><br>
+    Already have an account:<br><br>
+    Email: <input title="email" type="text"><br><br>
+    Password: <input title="password" type="password"><br><br>
+    <label onclick="alert('Reset password');">Forgot password</label><br><br>
+    <br><br>
+    <footer class="navbar-fixed-bottom">
+        <p class="text-right">
+            <button type="button" class="btn btn-secondary" onclick="openTab(event, 'treatmentList')">BACK</button>
+            <button type="button" class="btn btn-primary" onclick="alert('test')">SUBMIT</button>
+        </p>
+    </footer>
+</div>
 
 <script src="js/jquery-3.2.1.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script src="js/tabopener.js" type="text/javascript"></script>
+<script src="js/bookAppointment.js" type="text/javascript"></script>
 </body>
 </html>

@@ -58,17 +58,7 @@ public class TreatmentController {
             return LoginHandler.INVALID_CREDENTIALS;
         }
 
-        boolean hasPrivilege = false;
-        for (Role r : ac.getRoles()) { // Check if the user has the
-            //if (r.getName().equals(LoginHandler.Role.ADMIN.getName())) {
-            for (Privilege p : r.getPrivileges()) {
-
-                if (p.getName().equals(InitialDataLoader.CREATE_TREATMENT)) {
-                    hasPrivilege = true;
-                    break;
-                }
-            }
-        }
+        boolean hasPrivilege = LoginHandler.hasPrivilege(ac, InitialDataLoader.CREATE_TREATMENT);
         if (hasPrivilege) {
             try {
                 Treatment t = new Treatment();
@@ -118,17 +108,7 @@ public class TreatmentController {
         if (ac == null) {
             return LoginHandler.INVALID_CREDENTIALS;
         }
-        boolean hasPrivilege = false;
-        for (Role r : ac.getRoles()) { // Check if the user has the
-            //if (r.getName().equals(LoginHandler.Role.ADMIN.getName())) {
-            for (Privilege p : r.getPrivileges()) {
-
-                if (p.getName().equals(InitialDataLoader.EDIT_TREATMENT)) {
-                    hasPrivilege = true;
-                    break;
-                }
-            }
-        }
+        boolean hasPrivilege = LoginHandler.hasPrivilege(ac, InitialDataLoader.EDIT_TREATMENT);
         if (hasPrivilege) {
             Treatment t = treatmentRepository.findOne(treatment);
             if (t == null) {
@@ -159,17 +139,7 @@ public class TreatmentController {
         if (ac == null) {
             return LoginHandler.INVALID_CREDENTIALS;
         }
-        boolean hasPrivilege = false;
-        for (Role r : ac.getRoles()) { // Check if the user has the
-            //if (r.getName().equals(LoginHandler.Role.ADMIN.getName())) {
-            for (Privilege p : r.getPrivileges()) {
-
-                if (p.getName().equals(InitialDataLoader.DELETE_TREATMENT)) {
-                    hasPrivilege = true;
-                    break;
-                }
-            }
-        }
+        boolean hasPrivilege = LoginHandler.hasPrivilege(ac, InitialDataLoader.DELETE_TREATMENT);
         if (hasPrivilege) {
             try {
                 Treatment t = treatmentRepository.findOne(treatment);
