@@ -3,7 +3,6 @@ package dk.kea.dat16j.therussians.moname.domain.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.*;
-import javax.validation.constraints.Min;
 import java.util.Collection;
 
 /**
@@ -25,7 +24,6 @@ public abstract class Account {
     @Column(name = "email", unique = true, nullable = false)
     private String email;
 
-    @Min(value = 3) // sets a minimum length for the password
     @Column(name = "password")
     private String password;
 

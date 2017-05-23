@@ -3,6 +3,7 @@ package dk.kea.dat16j.therussians.moname.domain.webservice;
 import dk.kea.dat16j.therussians.moname.domain.entity.Account;
 import dk.kea.dat16j.therussians.moname.domain.entity.Customer;
 import dk.kea.dat16j.therussians.moname.domain.entity.CustomerAccount;
+import dk.kea.dat16j.therussians.moname.domain.entity.Role;
 import dk.kea.dat16j.therussians.moname.domain.repository.AccountRepository;
 import dk.kea.dat16j.therussians.moname.domain.repository.CustomerRepository;
 import dk.kea.dat16j.therussians.moname.domain.repository.RoleRepository;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 
 /**
  * Created by eegerpoop on 5/17/2017.
@@ -22,11 +24,13 @@ public class CustomerAccountController {
 
     private AccountRepository accountRepository;
     private CustomerRepository customerRepository;
+    private RoleRepository roleRepository;
 
     @Autowired
-    public CustomerAccountController(AccountRepository accountRepository, CustomerRepository customerRepository) {
+    public CustomerAccountController(AccountRepository accountRepository, CustomerRepository customerRepository, RoleRepository roleRepository) {
         this.accountRepository = accountRepository;
         this.customerRepository = customerRepository;
+        this.roleRepository = roleRepository;
     }
 
     @RequestMapping(path = "/create")
@@ -48,6 +52,7 @@ public class CustomerAccountController {
         ac.setEmail(email);
         ac.setPassword(password);
         ac.setCustomerId(c.getId());
+        ac.setRoles(Arrays.asList(roleRepository.findByName("ROLE_USER")));
 
         accountRepository.save(ac);
         return "Saved";
@@ -70,7 +75,7 @@ public class CustomerAccountController {
         if (ac != null && ac instanceof CustomerAccount) {
             temp = (CustomerAccount) ac;
         } else {
-            return "Invalid Customer Account";
+            return LoginHandler.INVALID_CREDENTIALS;
         }
 
         temp.setEmail(newEmail);
