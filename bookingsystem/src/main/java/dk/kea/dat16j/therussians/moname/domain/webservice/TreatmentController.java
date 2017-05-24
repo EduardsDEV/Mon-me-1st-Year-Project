@@ -58,7 +58,7 @@ public class TreatmentController {
             return LoginHandler.INVALID_CREDENTIALS;
         }
 
-        boolean hasPrivilege = LoginHandler.hasPrivilege(ac, InitialDataLoader.CREATE_TREATMENT);
+        boolean hasPrivilege = ac.hasPrivilege(InitialDataLoader.CREATE_TREATMENT);
         if (hasPrivilege) {
             try {
                 Treatment t = new Treatment();
@@ -108,7 +108,7 @@ public class TreatmentController {
         if (ac == null) {
             return LoginHandler.INVALID_CREDENTIALS;
         }
-        boolean hasPrivilege = LoginHandler.hasPrivilege(ac, InitialDataLoader.EDIT_TREATMENT);
+        boolean hasPrivilege = ac.hasPrivilege(InitialDataLoader.EDIT_TREATMENT);
         if (hasPrivilege) {
             Treatment t = treatmentRepository.findOne(treatment);
             if (t == null) {
@@ -139,7 +139,7 @@ public class TreatmentController {
         if (ac == null) {
             return LoginHandler.INVALID_CREDENTIALS;
         }
-        boolean hasPrivilege = LoginHandler.hasPrivilege(ac, InitialDataLoader.DELETE_TREATMENT);
+        boolean hasPrivilege = ac.hasPrivilege(InitialDataLoader.DELETE_TREATMENT);
         if (hasPrivilege) {
             try {
                 Treatment t = treatmentRepository.findOne(treatment);

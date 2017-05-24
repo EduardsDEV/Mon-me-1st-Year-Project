@@ -39,18 +39,6 @@ public class LoginHandler {
         return ac;
     }
 
-    public static boolean hasPrivilege(Account ac, String privilege) {
-        for(dk.kea.dat16j.therussians.moname.domain.entity.Role r : ac.getRoles()){
-            //if (r.getName().equals(LoginHandler.Role.ADMIN.getName())) {
-            for(Privilege p : r.getPrivileges()){
-                if(p.getName().equals(privilege)){
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     public static enum Role {
         UNKNOWN ("UNKNOWN"),
         ADMIN("ROLE_ADMIN"),

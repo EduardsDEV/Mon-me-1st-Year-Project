@@ -43,7 +43,6 @@ public class AppointmentController {
     @ResponseBody
     @RequestMapping(path = "/add")
     public String addAppointment(@RequestParam(name = "datetime") String dateAndTime,
-                                 @RequestParam(name = "customer") long customerId,
                                  @RequestParam(name = "treatment") Integer treatment,
                                  @RequestParam(required = false) String comment,
                                  @RequestParam String email,
@@ -53,7 +52,7 @@ public class AppointmentController {
         if (ac == null) {
             return LoginHandler.INVALID_CREDENTIALS;
         }
-        boolean hasPrivilege = LoginHandler.hasPrivilege(ac, InitialDataLoader.CREATE_APPOINTMENT);
+        boolean hasPrivilege = ac.hasPrivilege(InitialDataLoader.CREATE_APPOINTMENT);
         if (hasPrivilege) {
             try {
                 Treatment desiredTreatment = treatmentRepository.findOne(treatment);
@@ -64,7 +63,7 @@ public class AppointmentController {
                     Appointment newAppointment = new Appointment();
                     newAppointment.setDate(dateTime);
                     newAppointment.setComment(comment == null || comment.isEmpty() ? null : comment);
-                    newAppointment.setCustomer(customerRepository.findOne(customerId));
+                    newAppointment.setCustomer(customerRepository.findOne(((CustomerAccount) ac).getCustomerId()));
                     newAppointment.setTreatment(desiredTreatment);
 
                     appointmentRepository.save(newAppointment);
@@ -151,16 +150,16 @@ public class AppointmentController {
     public String deleteAppointment(@PathVariable(name = "appointment") long appointmentId,
                                     @RequestParam String email,
                                     @RequestParam String password) {
-        Account ac = LoginHandler.login(accountRepository, email, password );
-        if(ac == null){
+        Account ac = LoginHandler.login(accountRepository, email, password);
+        if (ac == null) {
             return LoginHandler.INVALID_CREDENTIALS;
         }
-        boolean hasPrivilege = LoginHandler.hasPrivilege(ac, InitialDataLoader.DELETE_APPOINTMENT);
-        if(hasPrivilege) {
+        boolean hasPrivilege = ac.hasPrivilege(InitialDataLoader.DELETE_APPOINTMENT);
+        if (hasPrivilege) {
             Appointment appointment = appointmentRepository.findOne(appointmentId);
             appointmentRepository.delete(appointment);
             return "Appointment Deleted";
-        }else{
+        } else {
             return "No Privileges";
         }
 
@@ -176,19 +175,19 @@ public class AppointmentController {
                                   @RequestParam(name = "treatment") Integer treatment,
                                   @RequestParam(required = false) String comment,
                                   @RequestParam String email,
-                                  @RequestParam String password){
+                                  @RequestParam String password) {
         Account ac = LoginHandler.login(accountRepository, email, password);
-        if(ac == null){
-           return LoginHandler.INVALID_CREDENTIALS;
+        if (ac == null) {
+            return LoginHandler.INVALID_CREDENTIALS;
         }
-        boolean hasPrivilege = LoginHandler.hasPrivilege(ac, InitialDataLoader.EDIT_APPOINTMENT);
+        boolean hasPrivilege = ac.hasPrivilege(InitialDataLoader.EDIT_APPOINTMENT);
         // TODO: 5/22/2017 Check if the appointment belongs to the customer
         // TODO: 5/22/2017 Do so that the checkAvailable doesn't interfer with this appointment
-        if(hasPrivilege){
+        if (hasPrivilege) {
             Appointment a = appointmentRepository.findOne(appointmentId);
-            if(a == null){
+            if (a == null) {
                 return "Error";
-            }else{
+            } else {
                 //appointmentRepository.delete(appointmentId);
                 LocalDateTime dateTime = LocalDateTime.parse(dateAndTime);
                 a.setDate(dateTime);
@@ -203,7 +202,7 @@ public class AppointmentController {
                 }
             }
         }
-        return"No privileges";
+        return "No privileges";
     }
 
     // Finds all appointments for a specific date

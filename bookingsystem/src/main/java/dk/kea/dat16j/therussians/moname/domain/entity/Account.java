@@ -65,6 +65,18 @@ public abstract class Account {
         this.accountId = accountId;
     }
 
+    public boolean hasPrivilege(String privilege) {
+        for(Role r : roles){
+            //if (r.getName().equals(LoginHandler.Role.ADMIN.getName())) {
+            for(Privilege p : r.getPrivileges()){
+                if(p.getName().equals(privilege)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
