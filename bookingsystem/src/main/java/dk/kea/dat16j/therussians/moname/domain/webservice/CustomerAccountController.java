@@ -8,10 +8,13 @@ import dk.kea.dat16j.therussians.moname.domain.repository.AccountRepository;
 import dk.kea.dat16j.therussians.moname.domain.repository.CustomerRepository;
 import dk.kea.dat16j.therussians.moname.domain.repository.RoleRepository;
 import dk.kea.dat16j.therussians.moname.domain.security.LoginHandler;
+import dk.kea.dat16j.therussians.moname.technicalservices.HtmlFileLoad;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Arrays;
 
@@ -86,6 +89,13 @@ public class CustomerAccountController {
         
         accountRepository.save(ac);
         return "Edited";
+    }
+
+    @RequestMapping
+    @ResponseBody
+    public void loadPage(HttpServletResponse response) throws IOException {
+        String src = "src/main/resources/templates/newAccount.html";
+        HtmlFileLoad.loadPage(response, src);
     }
 
 
