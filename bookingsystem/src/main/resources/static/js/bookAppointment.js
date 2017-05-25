@@ -1,9 +1,11 @@
 var treatmentId = -1;
 var treatments = [];
 var appointmentComment = "";
+var startingPoint;
+var selectedTreatment = null;
 
 function selectTreatment(treatment) {
-    treatmentId = treatment;
+    selectedTreatment = treatment;
 }
 
 function addComment(comment) {
@@ -13,7 +15,7 @@ function addComment(comment) {
 function addAppointmentForGuest(dateAndTime, firstName, lastName, phoneNumber, birthday) {
     var url = "http://localhost:8080/appointments/add-guest?";
     url += "datetime=" + dateAndTime + "&firstName=" + firstName + "&lastName=" + lastName + "&phoneNumber=" + phoneNumber;
-    url += "&treatment=" + treatmentId;
+    url += "&treatment=" + selectedTreatment.treatmentId;
     if (birthday != "") {
         url += "&birthday=" + birthday;
     }

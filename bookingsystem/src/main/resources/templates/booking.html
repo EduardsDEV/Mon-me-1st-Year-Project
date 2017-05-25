@@ -51,7 +51,6 @@
         })
     </script>
 </head>
-<body>
 <div>
     <header>
         <!-- navigation bar -->
@@ -71,64 +70,111 @@
                     </ul>
                 </div>
             </div>
-            <div class="tab">
-                <button class="tablinks" onclick="openTab(event, 'massage')">Massage</button>
-                <button class="tablinks" onclick="openTab(event, 'hair_removal')">Hair removal</button>
-                <button class="tablinks" onclick="openTab(event, 'facial')">Facial</button>
-                <button class="tablinks" onclick="openTab(event, 'makeup')">Makeup</button>
+            <div id="categoryGroup" class="tab tabcontent" style="display: block;">
+                <button class="tablinks" onclick="openTab(event, 'massage', 'category')">Massage</button>
+                <button class="tablinks" onclick="openTab(event, 'hair_removal', 'category')">Hair removal</button>
+                <button class="tablinks" onclick="openTab(event, 'facial', 'category')">Facial</button>
+                <button class="tablinks" onclick="openTab(event, 'makeup', 'category')">Makeup</button>
             </div>
         </nav>
     </header>
+
     <div>
+        <!-- Treatment selection part-->
         <form id="treatmentInput">
-            <div id="massage" class="tabcontent btn-group" style="display: block;" data-toggle="buttons"></div>
-            <div id="hair_removal" class="tabcontent btn-group" data-toggle="buttons"></div>
-            <div id="facial" class="tabcontent" data-toggle="buttons"></div>
-            <div id="makeup" class="tabcontent" data-toggle="buttons"></div>
+            <div id="massage" class="category btn-group" style="display: block;" data-toggle="buttons"></div>
+            <div id="hair_removal" class="category btn-group" style="display: none;" data-toggle="buttons"></div>
+            <div id="facial" class="category" style="display: none;" data-toggle="buttons"></div>
+            <div id="makeup" class="category" style="display: none;" data-toggle="buttons"></div>
         </form>
     </div>
 
-    <script>function displayAppointmentInfo() {
-        var id = $('input[name=category]:checked', '#treatmentInput').val();
-        if (id != 'on' && id > 0) {
-            selectTreatment(id);
-            var treatment;
-            for (var i = 0; i < treatments.length; i++) {
-                if (treatments[i].treatmentId == id) {
-                    treatment = treatments[i];
-                    break;
-                }
-            }
-            $("#treatmentName").append(treatment.name);
-            $("#treatmentDuration").append(timeToString(treatment.duration));
-            $("#treatmentPrice").append(treatment.price + " dkk");
-            $("#treatmentDate").append("Put a date here!!!");
-            openTab(event, 'summary');
-        } else {
-            alert("select treatment first");
+
+    <script>
+        function openUrl(url) {
+            window.open(url, "_self");
         }
-    }</script>
 
-    <button id="nextBtn" type="button" class="btn btn-primary"
-            onclick="displayAppointmentInfo()">NEXT
-    </button>
+        function displayAppointmentCalendar() {
+            var id = $('input[name=category]:checked', '#treatmentInput').val();
+            if (id != 'on' && id > 0) {
+                for (var i = 0; i < treatments.length; i++) {
+                    if (treatments[i].treatmentId == id) {
+                        selectTreatment(treatments[i]);
+                        break;
+                    }
+                }
+                $("#treatmentName").append(selectedTreatment.name);
+                $("#treatmentDuration").append(timeToString(selectedTreatment.duration));
+                $("#treatmentPrice").append(selectedTreatment.price + " dkk");
+                $("#treatmentDate").append("Put a date here!!!");
+
+                document.getElementById("treatmentInput").style.display = "none";
+                document.getElementById("categoryGroup").style.display = "none";
+                document.getElementById("nextBtn").onclick = getAppointmentTime;
+                document.getElementById("backBtn").style.display = "block";
+                //document.getElementById("nextBtn").className = document.getElementById("nextBtn").className.replace(" active", "");
+                document.getElementById("backBtn").onclick = function () {
+                    openUrl("http://localhost:8080/appointments");
+                };
+                openTab(event, 'calendar', "");
+            } else {
+                alert("select treatment first");
+            }
+        }
+    </script>
 </div>
+<!-- End Treatment selection part-->
 
+<!-- Date and Time selection part-->
+<div id="calendar" class="tabcontent">calendar will be here</div>
+<script>
+    function getAppointmentTime() {
+        document.getElementById("nextBtn").onclick = saveCustomerComment;
+        document.getElementById("backBtn").onclick = goBackToTreatmentSelection;
+
+        openTab(event, "summary", "tabcontent");
+    }
+
+    function goBackToTreatmentSelection() {
+        document.getElementById("nextBtn").onclick = getAppointmentTime;
+        document.getElementById("backBtn").onclick = function () {
+            openUrl("http://localhost:8080/appointments");
+        };
+        openTab(event, "calendar", "tabcontent");
+    }
+</script>
+<!-- End of Date and Time selection part-->
+
+<!-- Appointment information part-->
 <div class="tabcontent" id="summary">
     Treatment name: <label id="treatmentName"></label><br>
     Duration: <label id="treatmentDuration"></label><br>
     Price: <label id="treatmentPrice"></label><br>
     Date: <label id="treatmentDate"></label><br>
     Comment: <input type="text" title="comment" id="comment" width="150" height="50"><br>
-    <script>function saveCustomerComment() {
+</div>
+<script>
+    function saveCustomerComment() {
         var comment = document.getElementById("comment").value.toString();
         addComment(comment);
-        openTab(event, 'customerInfo');
-        console.log(appointmentComment);
-    }</script>
-    <button onclick="saveCustomerComment()">NEXT
-    </button>
-</div>
+        document.getElementById("nextBtn").style.display = "none";
+
+        document.getElementById("backBtn").onclick = goBackToCustomerComment;
+        openTab(event, 'customerInfo', "tabcontent");
+    }
+
+    function goBackToCustomerComment() {
+        document.getElementById("nextBtn").style.display = "block";
+        document.getElementById("nextBtn").onclick = saveCustomerComment;
+        document.getElementById("backBtn").onclick = goBackToTreatmentSelection;
+        openTab(event, "summary", "tabcontent");
+    }
+</script>
+<!-- End Appointment information part-->
+
+
+<!-- Customer information part-->
 <div class="tabcontent container-fluid" id="customerInfo" align="center">
     <div class="row">
         <h1 align="center">Customer information</h1>
@@ -146,6 +192,7 @@
                 var phoneNumber = document.getElementById("guestPhone").value;
                 var result = addAppointmentForGuest("2017-12-23T12:00", fName, lName, phoneNumber, "");
                 console.log(result);
+                openTab('event', "confirmationTab", "tabcontent");
             }</script>
             <button type="button" class="btn btn-default" onclick="guestInfoSubmit()">SUBMIT</button>
         </div>
@@ -162,13 +209,40 @@
                 var email = document.getElementById("email");
                 var password = document.getElementById("password");
                 var result = addAppointment("2017-12-24T12:00", email, password);
-                //console.log(result);
+                console.log(result);
+                openTab('event', "confirmationTab", "tabcontent");
             }</script>
             <button type="button" class="btn btn-default" onclick="accountInfoSubmit()">Login</button>
         </div>
     </div>
-    <button type="button" class="btn btn-secondary" onclick="openTab(event, 'treatmentList')">BACK</button>
 </div>
+<!-- End Customer information part-->
+
+
+<!--Appointment confirmation part-->
+<div class="tabcontent" id="confirmationTab">
+    <h1 align="center">Your booking has been confirmed!</h1><br/>
+    <div><b>First Name:</b> <label id="firstNameConfirm"/></div>
+    <div><b>Surname:</b> <label id="lastNameNameConfirm"/></div>
+    <div><b>Birthday:</b><label id="birthdayConfirm"/></div>
+    <div><b>Phone No.:</b><label id="phoneNumberConfirm"/></div>
+    <div><b>Email:</b><label id="emailConfirm"/></div>
+    <br/>
+    <div><b>Treatment Name:</b><label id="treatmentConfirm"/></div>
+    <div><b>Duration:</b><label id="durationConfirm"/></div>
+    <div><b>Price:</b><label id="priceConfirm"/></div>
+    <div><b>Date:</b><label id="dateConfirm"/></div>
+</div>
+<!--End Appointment confirmation part-->
+
+<footer class="navbar-fixed-bottom">
+    <p class="text-right">
+        <button id="backBtn" type="button" class="btn btn-secondary" style="display: none">BACK</button>
+        <button id="nextBtn" type="button" class="btn btn-primary"
+                onclick="displayAppointmentCalendar()">NEXT
+        </button>
+    </p>
+</footer>
 
 <script src="js/jquery-3.2.1.min.js"></script>
 <script src="js/bootstrap.min.js"></script>

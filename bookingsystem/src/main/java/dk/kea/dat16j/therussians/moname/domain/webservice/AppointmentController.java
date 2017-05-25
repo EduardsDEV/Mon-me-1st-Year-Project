@@ -26,6 +26,8 @@ import java.util.List;
 @RequestMapping(path = "/appointments")
 public class AppointmentController {
 
+    public static final int MINUTES_BETWEEN_APPOINTMENTS = 5;
+
     @Autowired
     public AppointmentController(AppointmentRepository appointmentRepository, CustomerRepository customerRepository, TreatmentRepository treatmentRepository, AccountRepository accountRepository) {
         this.appointmentRepository = appointmentRepository;
@@ -57,7 +59,7 @@ public class AppointmentController {
             try {
                 Treatment desiredTreatment = treatmentRepository.findOne(treatment);
 
-                boolean result = checkAvailableTime(dateTime, dateTime.plusMinutes(desiredTreatment.getDuration()));
+                boolean result = checkAvailableTime(dateTime, dateTime.plusMinutes(desiredTreatment.getDuration() + MINUTES_BETWEEN_APPOINTMENTS));
                 if (result == true) {
 
                     Appointment newAppointment = new Appointment();
@@ -88,10 +90,20 @@ public class AppointmentController {
 
         for (Appointment a : appointments) {
             LocalDateTime tempStartTime = a.getDateAndTime();
-            LocalDateTime tempEndTime = a.getDateAndTime().plusMinutes(a.getTreatment().getDuration());
+            LocalDateTime tempEndTime = a.getDateAndTime().plusMinutes(a.getTreatment().getDuration()+MINUTES_BETWEEN_APPOINTMENTS);
 
             // Check if end time is not in the middle of a different appointment
             if (endingPoint.isAfter(tempStartTime) && endingPoint.isBefore(tempEndTime)) {
+                return false;
+            }
+
+            // Check if end time is not the same as ending or starting time of a different appointment
+            if (endingPoint.equals(tempStartTime) || endingPoint.equals(tempEndTime)) {
+                return false;
+            }
+
+            // Check if start time is not the same as ending or starting time of a different appointment
+            if (startingPoint.equals(tempStartTime) || startingPoint.equals(tempEndTime)) {
                 return false;
             }
 
@@ -123,7 +135,7 @@ public class AppointmentController {
 
 
         Treatment desiredTreatment = treatmentRepository.findOne(treatment);
-        boolean result = checkAvailableTime(dateTime, dateTime.plusMinutes(desiredTreatment.getDuration()));
+        boolean result = checkAvailableTime(dateTime, dateTime.plusMinutes(desiredTreatment.getDuration() + MINUTES_BETWEEN_APPOINTMENTS));
         if (result == true) {
             c = customerRepository.save(c);
             Appointment newGuestAppointment = new Appointment();
@@ -224,11 +236,9 @@ public class AppointmentController {
     @ResponseBody
     public List<Appointment> getScheduleForWeek(@PathVariable(name = "date") String date) {
         LocalDate temp = LocalDate.parse(date);
-
-        boolean wasSunday = false;
         List<Appointment> weekAppointments = new LinkedList<>();
-        while (temp.getDayOfWeek().getValue() <= 7 && !wasSunday) {
-            wasSunday = temp.getDayOfWeek().getValue() == 7;
+        temp = temp.minusDays(temp.getDayOfWeek().getValue() - 1); // goes to monday
+        for (int i = 0; i < 7; i++) {
             weekAppointments.addAll(getAppointmentsForDate(temp.toString()));
             temp = temp.plusDays(1);
         }

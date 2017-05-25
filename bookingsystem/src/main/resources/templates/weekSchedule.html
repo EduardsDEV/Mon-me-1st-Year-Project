@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'/>
+    <link href='../css/fullcalendar.min.css' rel='stylesheet'/>
+    <link href='../css/fullcalendar.print.min.css' rel='stylesheet' media='print'/>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <script src='../js/lib/moment.min.js'></script>
+    <script src='../js/lib/jquery.min.js'></script>
+    <script src='../js/fullcalendar.min.js'></script>
+    <script src="../js/generateEvents.js"></script>
+
+    <script>
+
+        $(document).ready(function () {
+            console.log(getData());
+            $('#calendar').fullCalendar({
+                defaultView: "agendaWeek",
+                firstDay: 1,
+                allDaySlot: false,
+                minTime: "08:00:00",
+                maxTime: "24:00:00",
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: "empty"
+                },
+                defaultDate: new Date().value,
+                navLinks: false, // can click day/week names to navigate views
+                businessHours: false, // display business hours
+                editable: false,
+                events: function (start, end, timezone, callback) {
+                    $.ajax({
+                        dataType: 'json',
+                        data: {
+                            // our hypothetical feed requires UNIX timestamps
+                            start: start.unix(),
+                            end: end.unix()
+                        },
+                        success: function () {
+                            var events = [];
+                            var temp = getData();
+                            for (var i = 0; i < temp.length; i++) {
+                                events.push({
+                                    title: $(this).attr('title'),
+                                    start: $(this).attr('start'), // will be parsed
+                                    end: $(this).attr('end'),
+                                    overlap: $(this).attr('overlap')
+
+                                });
+                            }
+                            callback(events);
+                        }
+                    });
+                }
+                /*eventSources: [
+
+                 // your event source
+                 {
+                 events: [ // put the array in the `events` property
+                 {
+                 title: 'event1',
+                 start: '2017-05-23'
+                 },
+                 {
+                 title: 'event2',
+                 start: '2017-05-25',
+                 end: '2017-05-25'
+                 },
+                 {
+                 title: 'event3',
+                 start: '2010-01-09T12:30:00'
+                 }
+                 ],
+                 color: 'black',     // an option!
+                 textColor: 'yellow' // an option!
+                 }
+                 ]*/
+                /*events: [
+                 {
+                 title: 'Business Lunch',
+                 start: '2017-05-03T13:00:00',
+                 constraint: 'businessHours'
+                 },
+                 {
+                 title: 'Meeting',
+                 start: '2017-05-13T11:00:00',
+                 constraint: 'availableForMeeting', // defined below
+                 color: '#257e4a'
+                 },
+                 {
+                 title: 'Conference',
+                 start: '2017-05-18',
+                 end: '2017-05-20'
+                 },
+                 {
+                 start: '2017-05-29T20:00:00'
+                 },
+
+                 // areas where "Meeting" must be dropped
+                 {
+                 id: 'availableForMeeting',
+                 start: '2017-05-11T10:00:00',
+                 end: '2017-05-11T16:00:00',
+                 rendering: 'background'
+                 },
+                 {
+                 id: 'availableForMeeting',
+                 start: '2017-05-13T10:00:00',
+                 end: '2017-05-13T16:00:00',
+                 rendering: 'background'
+                 },
+
+                 // red areas where no events can be dropped
+                 {
+                 start: '2017-05-24',
+                 end: '2017-05-28',
+                 overlap: false,
+                 rendering: 'background',
+                 color: '#ff9f89'
+                 },
+                 {
+                 start: '2017-05-06',
+                 end: '2017-05-08',
+                 overlap: false,
+                 rendering: 'background',
+                 color: '#ff9f89'
+                 }
+                 ]*/
+            })
+            ;
+
+        });
+
+    </script>
+    <style>
+
+        body {
+            margin: 40px 10px;
+            padding: 0;
+            font-family: "Lucida Grande", Helvetica, Arial, Verdana, sans-serif;
+            font-size: 14px;
+        }
+
+        #calendar {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <!-- navigation bar -->
+    <nav class="navbar transparent navbar-inverse">
+        <div class="container">
+            <!-- Logo -->
+            <div class="navbar-header">
+                <a href="http://localhost:8080" class="navbar-brand" id="logo">Mon &Acirc;me</a>
+            </div>
+
+            <!-- Menu Items aligned right-->
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav navbar-right" id="list">
+                    <li><a href="http://localhost:8080">HOME</a></li>
+                    <li><a href="http://localhost:8080/treatments">TREATMENTS</a></li>
+                    <li><a href="http://localhost:8080/appointments">BOOKING</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+<div id='calendar'></div>
+
+<script src="../js/bootstrap.min.js"></script>
+</body>
+</html>
