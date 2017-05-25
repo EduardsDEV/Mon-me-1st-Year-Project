@@ -23,7 +23,7 @@ public class Treatment {
     private String name;
 
     @Column(name = "treatment_price")
-    private float price;
+    private int price;
 
     @Column(name = "treatment_duration")
     private long duration;
@@ -66,11 +66,11 @@ public class Treatment {
         this.name = name;
     }
 
-    public float getPrice() {
+    public int getPrice() {
         return price;
     }
 
-    public void setPrice(float price) {
+    public void setPrice(int price) {
         this.price = price;
     }
 

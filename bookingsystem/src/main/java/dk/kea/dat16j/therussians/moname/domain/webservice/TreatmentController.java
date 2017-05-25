@@ -45,7 +45,7 @@ public class TreatmentController {
     @RequestMapping(path = "/add") // Map ONLY GET Requests
     @ResponseBody
     public String addNewTreatment(@RequestParam String name,
-                                  @RequestParam float price,
+                                  @RequestParam int price,
                                   @RequestParam long duration,
                                   @RequestParam String description,
                                   @RequestParam String category,

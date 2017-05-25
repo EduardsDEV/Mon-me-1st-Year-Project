@@ -109,13 +109,9 @@
         }
     }</script>
 
-    <footer class="navbar-fixed-bottom">
-        <p class="text-right">
-            <button id="nextBtn" type="button" class="btn btn-primary"
-                    onclick="displayAppointmentInfo()">NEXT
-            </button>
-        </p>
-    </footer>
+    <button id="nextBtn" type="button" class="btn btn-primary"
+            onclick="displayAppointmentInfo()">NEXT
+    </button>
 </div>
 
 <div class="tabcontent" id="summary">
@@ -124,54 +120,54 @@
     Price: <label id="treatmentPrice"></label><br>
     Date: <label id="treatmentDate"></label><br>
     Comment: <input type="text" title="comment" id="comment" width="150" height="50"><br>
-    <style>#comment {
-        background-color: rgb(255, 255, 0)
-    }</style>
     <script>function saveCustomerComment() {
         var comment = document.getElementById("comment").value.toString();
         addComment(comment);
-        openTab(event, 'customerInfo')
+        openTab(event, 'customerInfo');
         console.log(appointmentComment);
     }</script>
     <button onclick="saveCustomerComment()">NEXT
     </button>
 </div>
+<div class="tabcontent container-fluid" id="customerInfo" align="center">
+    <div class="row">
+        <h1 align="center">Customer information</h1>
+        <div class="col-md-6">
+            Sign in as a guest<br>
+            Name: <input title="name" type="text" id="guestFName"><br><br>
+            Surname: <input title="surname" type="text" id="guestLName"><br><br>
+            Birthday: <input title="birthday" type="date" id="guestBirthday"><br><br>
+            Phone number: <input title="phone" type="text" id="guestPhone"><br><br>
 
-
-<div class="tabcontent" id="customerInfo">
-    <h1 align="center">Customer information</h1>
-    Sign in as a guest<br>
-    Name: <input title="name" type="text" id="guestFName"><br><br>
-    Surname: <input title="surname" type="text" id="guestLName"><br><br>
-    Birthday: <input title="birthday" type="date" id="guestBirthday"><br><br>
-    Phone number: <input title="phone" type="text" id="guestPhone"><br><br>
-
-    <script>function guestInfoSubmit() {
-        var fName = document.getElementById("guestFName").value;
-        var lName = document.getElementById("guestLName").value;
-        var birthday = document.getElementById("guestBirthday").value;
-        var phoneNumber = document.getElementById("guestPhone").value;
-        var result = addAppointmentForGuest("2017-12-23T12:00", fName, lName, phoneNumber, "");
-        console.log(result);
-    }</script>
-
-    <button onclick="guestInfoSubmit()">SUBMIT</button>
-    <br><br>
-    Already have an account:<br><br>
-    Email: <input title="email" type="text" id="email"><br><br>
-    Password: <input title="password" type="password" id="password"><br><br>
-    <label onclick="alert('Reset password');">Forgot password</label><br><br>
-    <a href="http://localhost:8080/customerAccount" target="_blank" rel="noopener" class="btn btn-primary">Create new
-        account</a>
-    <br><br>
-    <script>function accountInfoSubmit() {
-        var email = document.getElementById("email");
-        var password = document.getElementById("password");
-        var result = addAppointment("2017-12-24T12:00", email, password);
-        //console.log(result);
-    }</script>
+            <script>function guestInfoSubmit() {
+                var fName = document.getElementById("guestFName").value;
+                var lName = document.getElementById("guestLName").value;
+                var birthday = document.getElementById("guestBirthday").value;
+                var phoneNumber = document.getElementById("guestPhone").value;
+                var result = addAppointmentForGuest("2017-12-23T12:00", fName, lName, phoneNumber, "");
+                console.log(result);
+            }</script>
+            <button type="button" class="btn btn-default" onclick="guestInfoSubmit()">SUBMIT</button>
+        </div>
+        <div class="col-md-6">
+            Already have an account:<br><br>
+            Email: <input title="email" type="text" id="email"><br><br>
+            Password: <input title="password" type="password" id="password"><br><br>
+            <label onclick="alert('Reset password');">Forgot password</label><br><br>
+            <a href="http://localhost:8080/customerAccount" target="_blank" rel="noopener" class="btn btn-primary">Create
+                new
+                account</a>
+            <br><br>
+            <script>function accountInfoSubmit() {
+                var email = document.getElementById("email");
+                var password = document.getElementById("password");
+                var result = addAppointment("2017-12-24T12:00", email, password);
+                //console.log(result);
+            }</script>
+            <button type="button" class="btn btn-default" onclick="accountInfoSubmit()">Login</button>
+        </div>
+    </div>
     <button type="button" class="btn btn-secondary" onclick="openTab(event, 'treatmentList')">BACK</button>
-    <button type="button" class="btn btn-primary" onclick="accountInfoSubmit()">SUBMIT</button>
 </div>
 
 <script src="js/jquery-3.2.1.min.js"></script>
