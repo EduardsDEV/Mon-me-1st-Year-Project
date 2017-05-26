@@ -6,7 +6,7 @@ function getData() {
     var yyyy = today.getFullYear();
     today = getDate(yyyy, mm, dd);
     var url = "http://localhost:8080/appointments/" + today + "/week";
-    var appointments = [];
+    var appointments = new Array();
     $.ajax({
         url: url,
         method: "GET",
@@ -16,20 +16,19 @@ function getData() {
                 var appointment = data[i];
                 var date = getDateTime(appointment.dateAndTime.year, appointment.dateAndTime.monthValue, appointment.dateAndTime.dayOfMonth, appointment.dateAndTime.hour, appointment.dateAndTime.minute);
                 var start = new Date(date);
-                console.log(date);
-                console.log(start.toISOString());
-                appointments.push(new Appointment(start, appointment.treatment.duration));
-                // appointments.push({
-                //     title: "appointment",
-                //     start: start.toISOString(),
-                //     end: moment(start).add(appointment.treatment.duration, 'm').toISOString(),
-                //     overlap:false
-                // });
+                // appointments.push(new Appointment(start, appointment.treatment.duration));
+                appointments.push({
+                    title: "appointment",
+                    start: start.toISOString(),
+                    end: moment(start).add(appointment.treatment.duration, 'm').toISOString(),
+                    overlap:false
+                });
                 // var ev = new Event("appointment");
                 // ev._start = start.toISOString();
                 // ev._end = moment(start).add(appointment.treatment.duration, 'm').toISOString();
                 // appointments.push(ev);
             }
+
         }
     });
     return appointments;

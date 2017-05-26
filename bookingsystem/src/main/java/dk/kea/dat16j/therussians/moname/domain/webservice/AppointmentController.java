@@ -111,6 +111,11 @@ public class AppointmentController {
             if (startingPoint.isAfter(tempStartTime) && startingPoint.isBefore(tempEndTime)/*start time shouldn't be before end time of a different appointment*/) {
                 return false;
             }
+
+            // Check if between start and ending point there isn't another appointment
+            if (startingPoint.isBefore(tempStartTime) && endingPoint.isAfter(tempEndTime)) {
+                return false;
+            }
         }
 
         return true;
@@ -237,6 +242,7 @@ public class AppointmentController {
     public List<Appointment> getScheduleForWeek(@PathVariable(name = "date") String date) {
         LocalDate temp = LocalDate.parse(date);
         List<Appointment> weekAppointments = new LinkedList<>();
+
         temp = temp.minusDays(temp.getDayOfWeek().getValue() - 1); // goes to monday
         for (int i = 0; i < 7; i++) {
             weekAppointments.addAll(getAppointmentsForDate(temp.toString()));

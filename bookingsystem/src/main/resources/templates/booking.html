@@ -3,14 +3,61 @@
 <head>
     <meta charset="utf-8">
     <title>mon &acirc;me - Hudplejklinik v/ Frida Sandberg</title>
-    <link rel="stylesheet" href="css/bootstrap.min.css">
     <link href="css/tabStyle.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link href='css/fullcalendar.min.css' rel='stylesheet'/>
+    <link href='css/fullcalendar.print.min.css' rel='stylesheet' media='print'/>
+    <script src='js/lib/moment.min.js'></script>
+    <script src='js/lib/jquery.min.js'></script>
+    <script src='js/fullcalendar.min.js'></script>
+    <script src='js/generateEvents.js'></script>
 
     <!-- Used for making an url request to the Java application-->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>-->
 
-    <script type="text/javascript">
+    <script>
         $(document).ready(function () {
+            $('#calendar').fullCalendar({
+                defaultView: "agendaWeek",
+                firstDay: 1,
+                allDaySlot: false,
+                minTime: "08:00:00",
+                maxTime: "24:00:00",
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: "empty"
+                },
+                defaultDate: Date.now(),
+                navLinks: false, // can click day/week names to navigate views
+                businessHours: false, // display business hours
+                editable: false,
+                droppable: true,
+                events: function (start, end, timezone, callback) {
+                    var events = [];
+                    $.ajax({
+                        url: "http://localhost:8080/appointments/" + start._d.toISOString().substring(0, 10) + "/week",
+                        method: "GET",
+                        dataType: "json",
+                        success: function (data) {
+                            for (var i = 0; i < data.length; i++) {
+                                var appointment = data[i];
+                                var date = getDateTime(appointment.dateAndTime.year, appointment.dateAndTime.monthValue, appointment.dateAndTime.dayOfMonth, appointment.dateAndTime.hour+2, appointment.dateAndTime.minute);
+                                var start = new Date(date);
+
+                                events.push({
+                                    title: "appointment",
+                                    start: start.toISOString().replace(".000Z", ""),
+                                    end: moment(start).add(appointment.treatment.duration, 'm').toISOString().replace(".000Z", ""),
+                                    overlap:false,
+                                    color:"red"
+                                });
+                            }
+                            callback(events);
+                        }
+                    });
+                }
+            });
             $.ajax({
                 url: "http://localhost:8080/treatments/all",
                 method: "GET",
@@ -45,10 +92,10 @@
                     $("#hair_removal").append(hairRemovalList);
                     $("#facial").append(facialList);
                     $("#makeup").append(makeupList);
-                    console.log(data);
                 }
             });
-        })
+        });
+
     </script>
 </head>
 <div>
@@ -127,7 +174,7 @@
 <!-- End Treatment selection part-->
 
 <!-- Date and Time selection part-->
-<div id="calendar" class="tabcontent">calendar will be here</div>
+<div id="calendar" class="tabcontent"></div>
 <script>
     function getAppointmentTime() {
         document.getElementById("nextBtn").onclick = saveCustomerComment;
@@ -235,7 +282,7 @@
 </div>
 <!--End Appointment confirmation part-->
 
-<footer class="navbar-fixed-bottom">
+<footer class="navbar">
     <p class="text-right">
         <button id="backBtn" type="button" class="btn btn-secondary" style="display: none">BACK</button>
         <button id="nextBtn" type="button" class="btn btn-primary"
@@ -244,7 +291,6 @@
     </p>
 </footer>
 
-<script src="js/jquery-3.2.1.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script src="js/tabopener.js" type="text/javascript"></script>
 <script src="js/bookAppointment.js" type="text/javascript"></script>
