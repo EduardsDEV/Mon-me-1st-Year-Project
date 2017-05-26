@@ -1,9 +1,9 @@
 package dk.kea.dat16j.therussians.moname.domain.security;
 
 import dk.kea.dat16j.therussians.moname.domain.entity.Account;
-import dk.kea.dat16j.therussians.moname.domain.entity.Privilege;
-import dk.kea.dat16j.therussians.moname.domain.entity.Role;
 import dk.kea.dat16j.therussians.moname.domain.repository.AccountRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * Created by Chris on 18-May-17.
@@ -11,13 +11,14 @@ import dk.kea.dat16j.therussians.moname.domain.repository.AccountRepository;
 public class LoginHandler {
 
     public static final String INVALID_CREDENTIALS = "Invalid credentials";
+    private static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
 
     public static Account login(AccountRepository accountRepository, String email, String password) {
         Account ac = accountRepository.findByEmail(email);
         if (ac == null) {
             return null; // TODO: 19-May-17 Consider throwing an error
         }
-        if(!ac.getPassword().equals(password)){
+        if(!PASSWORD_ENCODER.matches(password, ac.getPassword())){
             return null;
         }/*
         if (ac.getRoles().contains(roleRepository.findByName(Role.ADMIN.getName()))) {

@@ -1,15 +1,13 @@
 package dk.kea.dat16j.therussians.moname.domain.webservice;
 
-import dk.kea.dat16j.therussians.moname.domain.entity.Account;
-import dk.kea.dat16j.therussians.moname.domain.entity.Customer;
-import dk.kea.dat16j.therussians.moname.domain.entity.CustomerAccount;
-import dk.kea.dat16j.therussians.moname.domain.entity.Role;
+import dk.kea.dat16j.therussians.moname.domain.entity.*;
 import dk.kea.dat16j.therussians.moname.domain.repository.AccountRepository;
 import dk.kea.dat16j.therussians.moname.domain.repository.CustomerRepository;
 import dk.kea.dat16j.therussians.moname.domain.repository.RoleRepository;
 import dk.kea.dat16j.therussians.moname.domain.security.LoginHandler;
 import dk.kea.dat16j.therussians.moname.technicalservices.HtmlFileLoad;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,12 +26,14 @@ public class CustomerAccountController {
     private AccountRepository accountRepository;
     private CustomerRepository customerRepository;
     private RoleRepository roleRepository;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public CustomerAccountController(AccountRepository accountRepository, CustomerRepository customerRepository, RoleRepository roleRepository) {
+    public CustomerAccountController(AccountRepository accountRepository, PasswordEncoder passwordEncoder, CustomerRepository customerRepository, RoleRepository roleRepository) {
         this.accountRepository = accountRepository;
         this.customerRepository = customerRepository;
         this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @RequestMapping(path = "/create")
@@ -53,7 +53,7 @@ public class CustomerAccountController {
         CustomerAccount ac = new CustomerAccount();
 
         ac.setEmail(email);
-        ac.setPassword(password);
+        ac.setPassword(passwordEncoder.encode(password));
         ac.setCustomerId(c.getId());
         ac.setRoles(Arrays.asList(roleRepository.findByName("ROLE_USER")));
 
@@ -82,7 +82,7 @@ public class CustomerAccountController {
         }
 
         temp.setEmail(newEmail);
-        temp.setPassword(newPassword);
+        temp.setPassword(passwordEncoder.encode(newPassword));
 
         // TODO: 19-May-17 Should the customer id be changed?
         //temp.setCustomerId(customerId);
