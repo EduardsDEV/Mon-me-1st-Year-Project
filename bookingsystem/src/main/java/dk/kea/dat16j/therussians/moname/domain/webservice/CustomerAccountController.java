@@ -5,7 +5,7 @@ import dk.kea.dat16j.therussians.moname.domain.repository.AccountRepository;
 import dk.kea.dat16j.therussians.moname.domain.repository.CustomerRepository;
 import dk.kea.dat16j.therussians.moname.domain.repository.RoleRepository;
 import dk.kea.dat16j.therussians.moname.domain.security.LoginHandler;
-import dk.kea.dat16j.therussians.moname.technicalservices.HtmlFileLoad;
+import dk.kea.dat16j.therussians.moname.technicalservices.HtmlFileLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -95,7 +95,7 @@ public class CustomerAccountController {
     @ResponseBody
     public void loadPage(HttpServletResponse response) throws IOException {
         String src = "src/main/resources/templates/newAccount.html";
-        HtmlFileLoad.loadPage(response, src);
+        HtmlFileLoader.loadPage(response, src);
     }
 
 

@@ -4,7 +4,7 @@ import dk.kea.dat16j.therussians.moname.domain.entity.*;
 import dk.kea.dat16j.therussians.moname.domain.repository.*;
 import dk.kea.dat16j.therussians.moname.domain.security.InitialDataLoader;
 import dk.kea.dat16j.therussians.moname.domain.security.LoginHandler;
-import dk.kea.dat16j.therussians.moname.technicalservices.HtmlFileLoad;
+import dk.kea.dat16j.therussians.moname.technicalservices.HtmlFileLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Controller;
@@ -256,6 +256,6 @@ public class AppointmentController {
     @RequestMapping(method = RequestMethod.GET)
     public void loadPage(HttpServletResponse response) throws IOException {
         String src = "src/main/resources/templates/booking.html";
-        HtmlFileLoad.loadPage(response, src);
+        HtmlFileLoader.loadPage(response, src);
     }
 }

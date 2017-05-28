@@ -10,7 +10,7 @@ import java.io.InputStream;
 /**
  * Created by Chris on 17-May-17.
  */
-public class HtmlFileLoad {
+public class HtmlFileLoader {
     public static void loadPage(HttpServletResponse response, String path) throws IOException {
         InputStream is = new FileInputStream(path);
         IOUtils.copy(is, response.getOutputStream());

@@ -1,15 +1,13 @@
 package dk.kea.dat16j.therussians.moname.domain.webservice;
 
 import dk.kea.dat16j.therussians.moname.domain.entity.Account;
-import dk.kea.dat16j.therussians.moname.domain.entity.Privilege;
-import dk.kea.dat16j.therussians.moname.domain.entity.Role;
 import dk.kea.dat16j.therussians.moname.domain.entity.Treatment;
 import dk.kea.dat16j.therussians.moname.domain.repository.AccountRepository;
 import dk.kea.dat16j.therussians.moname.domain.repository.RoleRepository;
 import dk.kea.dat16j.therussians.moname.domain.repository.TreatmentRepository;
 import dk.kea.dat16j.therussians.moname.domain.security.InitialDataLoader;
 import dk.kea.dat16j.therussians.moname.domain.security.LoginHandler;
-import dk.kea.dat16j.therussians.moname.technicalservices.HtmlFileLoad;
+import dk.kea.dat16j.therussians.moname.technicalservices.HtmlFileLoader;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -159,7 +157,7 @@ public class TreatmentController {
     public void getFile(
             HttpServletResponse response) throws IOException {
         String src = "src/main/resources/templates/treatments.html";
-        HtmlFileLoad.loadPage(response, src);
+        HtmlFileLoader.loadPage(response, src);
     }
 
     @ResponseBody
