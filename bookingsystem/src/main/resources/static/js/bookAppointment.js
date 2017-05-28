@@ -11,12 +11,15 @@ function selectTreatment(treatment) {
 function addComment(comment) {
     appointmentComment = comment;
 }
+function addStartingPoint(start) {
+    startingPoint = start;
+}
 
-function addAppointmentForGuest(dateAndTime, firstName, lastName, phoneNumber, birthday) {
+function addAppointmentForGuest(firstName, lastName, phoneNumber, birthday) {
     var url = "http://localhost:8080/appointments/add-guest?";
-    url += "datetime=" + dateAndTime + "&firstName=" + firstName + "&lastName=" + lastName + "&phoneNumber=" + phoneNumber;
+    url += "datetime=" + startingPoint + "&firstName=" + firstName + "&lastName=" + lastName + "&phoneNumber=" + phoneNumber;
     url += "&treatment=" + selectedTreatment.treatmentId;
-    if (birthday != "") {
+    if (birthday != "" && birthday != "undefined") {
         url += "&birthday=" + birthday;
     }
     if (appointmentComment != "") {
@@ -34,9 +37,9 @@ function addAppointmentForGuest(dateAndTime, firstName, lastName, phoneNumber, b
     return result;
 }
 
-function addAppointment(dateAndTime, email, password) {
+function addAppointment(email, password) {
     var url = "http://localhost:8080/appointments/add?";
-    url += "datetime=" + dateAndTime + "&treatment=" + treatmentId + "&email=" + email + "&password=" + password;
+    url += "datetime=" + startingPoint + "&treatment=" + treatmentId + "&email=" + email + "&password=" + password;
     if (appointmentComment != "") {
         url += "&comment=" + appointmentComment;
     }

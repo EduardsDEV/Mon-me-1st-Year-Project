@@ -24,8 +24,8 @@
                 // store data so the calendar knows to render an event upon drop
                 $(this).data('event', {
                     title: $.trim($(this).text()), // use the element's text as the event title
-                    stick: true, // maintain when user navigates (see docs on the renderEvent method)
-                    duration: {minutes: 60}
+                    stick: true // maintain when user navigates (see docs on the renderEvent method)
+//                    id:"test"
                 });
 
                 // make the event draggable using jQuery UI
@@ -69,7 +69,7 @@
                                 var start = new Date(date);
 
                                 events.push({
-                                    title: "appointment",
+                                    title: "Booked",
                                     start: start.toISOString().replace(".000Z", ""),
                                     end: moment(start).add(appointment.treatment.duration, 'm').toISOString().replace(".000Z", ""),
                                     overlap: false,
@@ -233,8 +233,9 @@
                     // store data so the calendar knows to render an event upon drop
                     $(this).data('event', {
                         duration: {minutes: selectedTreatment.duration},
-                        title: "My appointment",
-                        color: "green"
+                        color: "green",
+                        id:"newAppointment",
+                        title:"My appointment"
                     });
 
                 });
@@ -242,7 +243,6 @@
                 $("#treatmentName").append(selectedTreatment.name);
                 $("#treatmentDuration").append(timeToString(selectedTreatment.duration));
                 $("#treatmentPrice").append(selectedTreatment.price + " dkk");
-                $("#treatmentDate").append("Put a date here!!!");
 
                 document.getElementById("treatmentInput").style.display = "none";
                 document.getElementById("categoryGroup").style.display = "none";
@@ -278,7 +278,17 @@
     function getAppointmentTime() {
         document.getElementById("nextBtn").onclick = saveCustomerComment;
         document.getElementById("backBtn").onclick = goBackToTreatmentSelection;
+        var newAppointment = $('#calendar').fullCalendar( 'clientEvents', "newAppointment")[0];
+        var start = newAppointment.start._d.toISOString().replace(":00.000Z", "");
+        var end = newAppointment.end._d.toISOString().replace(":00.000Z", "");
+//        console.log(moment(start).format("dddd, MMMM Do YYYY, HH:mm:ss"));
+        var dateTime = moment(start).format("HH:mm") + " - " + moment(end).format("HH:mm, dddd, MMMM Do, YYYY");
 
+        var label = $("#treatmentDate");
+        label.empty();
+        label.append(dateTime);
+        //Check if customer choose a time
+        addStartingPoint(start);
         openTab(event, "summary", "tabcontent");
     }
 
@@ -287,7 +297,7 @@
         document.getElementById("backBtn").onclick = function () {
             openUrl("http://localhost:8080/appointments");
         };
-        openTab(event, "calendar", "tabcontent");
+        openTab(event, "wrap", "tabcontent");
     }
 </script>
 <!-- End of Date and Time selection part-->
@@ -334,9 +344,9 @@
             <script>function guestInfoSubmit() {
                 var fName = document.getElementById("guestFName").value;
                 var lName = document.getElementById("guestLName").value;
-                var birthday = document.getElementById("guestBirthday").value;
+                var birthday = $("#guestBirthday").val();
                 var phoneNumber = document.getElementById("guestPhone").value;
-                var result = addAppointmentForGuest("2017-12-23T12:00", fName, lName, phoneNumber, "");
+                var result = addAppointmentForGuest(fName, lName, phoneNumber, birthday);
                 console.log(result);
                 openTab('event', "confirmationTab", "tabcontent");
             }
@@ -358,7 +368,7 @@
             <script>function accountInfoSubmit() {
                 var email = document.getElementById("email");
                 var password = document.getElementById("password");
-                var result = addAppointment("2017-12-24T12:00", email, password);
+                var result = addAppointment(email, password);
                 console.log(result);
                 openTab('event', "confirmationTab", "tabcontent");
             }</script>
