@@ -2,6 +2,7 @@ var treatmentId = -1;
 var treatments = [];
 var appointmentComment = "";
 var startingPoint;
+var endingPoint;
 var selectedTreatment = null;
 
 function selectTreatment(treatment) {
@@ -11,11 +12,12 @@ function selectTreatment(treatment) {
 function addComment(comment) {
     appointmentComment = comment;
 }
-function addStartingPoint(start) {
+function addTimes(start, ending) {
     startingPoint = start;
+    endingPoint = ending;
 }
 
-function addAppointmentForGuest(firstName, lastName, phoneNumber, birthday) {
+function addAppointmentForGuest(firstName, lastName, phoneNumber, birthday, callback) {
     var url = "http://localhost:8080/appointments/add-guest?";
     url += "datetime=" + startingPoint + "&firstName=" + firstName + "&lastName=" + lastName + "&phoneNumber=" + phoneNumber;
     url += "&treatment=" + selectedTreatment.treatmentId;
@@ -29,17 +31,17 @@ function addAppointmentForGuest(firstName, lastName, phoneNumber, birthday) {
     $.ajax({
         url: url,
         method: "PUT",
-        dataType: "string",
+        dataType: "text",
         success: function (data) {
             result = data;
+            callback(result);
         }
     });
-    return result;
 }
 
 function addAppointment(email, password) {
     var url = "http://localhost:8080/appointments/add?";
-    url += "datetime=" + startingPoint + "&treatment=" + treatmentId + "&email=" + email + "&password=" + password;
+    url += "datetime=" + startingPoint + "&treatment=" + selectedTreatment.treatmentId + "&email=" + email + "&password=" + password;
     if (appointmentComment != "") {
         url += "&comment=" + appointmentComment;
     }

@@ -20,23 +20,7 @@ public class LoginHandler {
         }
         if(!PASSWORD_ENCODER.matches(password, ac.getPassword())){
             return null;
-        }/*
-        if (ac.getRoles().contains(roleRepository.findByName(Role.ADMIN.getName()))) {
-            AdminAccount a = new AdminAccount();
-            a.setPassword(ac.getPassword());
-            a.setRoles(ac.getRoles());
-            a.setAccountId(ac.getAccountId());
-            a.setEmail(ac.getEmail());
-            return a;
         }
-        if (ac.getRoles().contains(roleRepository.findByName(Role.USER.getName()))) {
-            CustomerAccount a = new CustomerAccount();
-            a.setPassword(ac.getPassword());
-            a.setRoles(ac.getRoles());
-            a.setAccountId(ac.getAccountId());
-            a.setEmail(ac.getEmail());
-            return a;
-        }*/
         return ac;
     }
 

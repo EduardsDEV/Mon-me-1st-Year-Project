@@ -25,7 +25,6 @@
                 $(this).data('event', {
                     title: $.trim($(this).text()), // use the element's text as the event title
                     stick: true // maintain when user navigates (see docs on the renderEvent method)
-//                    id:"test"
                 });
 
                 // make the event draggable using jQuery UI
@@ -52,7 +51,11 @@
                 businessHours: false, // display business hours
                 editable: false,
                 droppable: true,
-                drop: function () {
+                drop: function (date) {
+                    if (date < new Date(Date.now())) {
+                        alert("You cannot book on this day!");
+                        return;
+                    }
                     // if so, remove the element from the "Draggable Events" list
                     $(this).remove();
                 },
@@ -234,8 +237,8 @@
                     $(this).data('event', {
                         duration: {minutes: selectedTreatment.duration},
                         color: "green",
-                        id:"newAppointment",
-                        title:"My appointment"
+                        id: "newAppointment",
+                        title: "My appointment"
                     });
 
                 });
@@ -278,7 +281,12 @@
     function getAppointmentTime() {
         document.getElementById("nextBtn").onclick = saveCustomerComment;
         document.getElementById("backBtn").onclick = goBackToTreatmentSelection;
-        var newAppointment = $('#calendar').fullCalendar( 'clientEvents', "newAppointment")[0];
+        var appointments = $('#calendar').fullCalendar('clientEvents', "newAppointment");
+        if(appointments.length <= 0){
+            alert("Please select the time for appointment");
+            return;
+        }
+        var newAppointment = appointments[0];
         var start = newAppointment.start._d.toISOString().replace(":00.000Z", "");
         var end = newAppointment.end._d.toISOString().replace(":00.000Z", "");
 //        console.log(moment(start).format("dddd, MMMM Do YYYY, HH:mm:ss"));
@@ -288,7 +296,7 @@
         label.empty();
         label.append(dateTime);
         //Check if customer choose a time
-        addStartingPoint(start);
+        addTimes(start, end);
         openTab(event, "summary", "tabcontent");
     }
 
@@ -343,34 +351,45 @@
 
             <script>function guestInfoSubmit() {
                 var phoneNumber = document.getElementById("guestPhone").value;
-                if(!validPhone(phoneNumber)){
+                if (!validPhone(phoneNumber)) {
                     alert("Please enter phone number in the following format +XXXXXXXXXX")
                     return;
                 }
                 var fName = document.getElementById("guestFName").value;
                 var lName = document.getElementById("guestLName").value;
                 var birthday = $("#guestBirthday").val();
-                var result = addAppointmentForGuest(fName, lName, phoneNumber, birthday);
-                console.log(result);
-                openTab('event', "confirmationTab", "tabcontent");
+                if (birthday == "" || birthday == "undefined") {
+                    if (new Date(birthday) >= Date.now()) {
+                        alert("Birthday cannot be today or in the future!!!");
+                        return;
+                    }
+                }
+                addAppointmentForGuest(fName, lName, phoneNumber, birthday, function (result) {
+                    console.log(result);
+                });
+                appointmentConfirmation(fName, lName, "", birthday, phoneNumber);
+                openTab(event, "confirmationTab", "tabcontent");
             }
 
-            function validPhone(inputtxt)
-            {
+            function validPhone(inputtxt) {
                 var phoneno = /^\+?([0-9]{2})\)?\d{8}$/;
-                if((inputtxt.match(phoneno)))
-                {
-                    return true;
-                }
-                else
-                {
-                    alert("message");
-                    return false;
-                }
+                return inputtxt.match(phoneno);
             }
 
-            function appointmentConfirmation() {
+            function appointmentConfirmation(firstName, surname, email, birthday, phoneNumber) {
+                $("#firstNameConfirm").append(firstName);
+                $("#lastNameConfirm").append(surname);
+                $("#emailConfirm").append(email);
+                $("#phoneNumberConfirm").append(phoneNumber);
+                $("#birthdayConfirm").append(birthday);
 
+                $("#treatmentConfirm").append(selectedTreatment.name);
+                $("#durationConfirm").append(timeToString(selectedTreatment.duration));
+                $("#priceConfirm").append(selectedTreatment.price + " dkk");
+                var dateTime = moment(startingPoint).format("HH:mm") + " - " + moment(endingPoint).format("HH:mm, dddd, MMMM Do, YYYY");
+                var label = $("#dateConfirm");
+                label.empty();
+                label.append(dateTime);
             }
             </script>
             <button type="button" class="btn btn-default" onclick="guestInfoSubmit()">SUBMIT</button>
@@ -381,15 +400,15 @@
             Password: <input title="password" type="password" id="password"><br><br>
             <label onclick="alert('Reset password');">Forgot password</label><br><br>
             <a href="http://localhost:8080/customerAccount" target="_blank" rel="noopener" class="btn btn-primary">Create
-                new
+                news
                 account</a>
             <br><br>
             <script>function accountInfoSubmit() {
-                var email = document.getElementById("email");
-                var password = document.getElementById("password");
+                var email = document.getElementById("email").value;
+                var password = document.getElementById("password").value;
                 var result = addAppointment(email, password);
-                console.log(result);
-                openTab('event', "confirmationTab", "tabcontent");
+                appointmentConfirmation("test", "test", "test", "1997-05-27", "+4550234891");
+                openTab(event, "confirmationTab", "tabcontent");
             }</script>
             <button type="button" class="btn btn-default" onclick="accountInfoSubmit()">Login</button>
         </div>
@@ -402,7 +421,7 @@
 <div class="tabcontent" id="confirmationTab">
     <h1 align="center">Your booking has been confirmed!</h1><br/>
     <div><b>First Name:</b> <label id="firstNameConfirm"/></div>
-    <div><b>Surname:</b> <label id="lastNameNameConfirm"/></div>
+    <div><b>Surname:</b> <label id="lastNameConfirm"/></div>
     <div><b>Birthday:</b><label id="birthdayConfirm"/></div>
     <div><b>Phone No.:</b><label id="phoneNumberConfirm"/></div>
     <div><b>Email:</b><label id="emailConfirm"/></div>
