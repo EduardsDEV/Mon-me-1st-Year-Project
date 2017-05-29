@@ -339,17 +339,36 @@
             Name: <input title="name" type="text" id="guestFName"><br><br>
             Surname: <input title="surname" type="text" id="guestLName"><br><br>
             Birthday: <input title="birthday" type="date" id="guestBirthday"><br><br>
-            Phone number: <input title="phone" type="text" id="guestPhone"><br><br>
+            Phone number: <input title="phone" type="tel" id="guestPhone"><br><br>
 
             <script>function guestInfoSubmit() {
+                var phoneNumber = document.getElementById("guestPhone").value;
+                if(!validPhone(phoneNumber)){
+                    alert("Please enter phone number in the following format +XXXXXXXXXX")
+                    return;
+                }
                 var fName = document.getElementById("guestFName").value;
                 var lName = document.getElementById("guestLName").value;
                 var birthday = $("#guestBirthday").val();
-                var phoneNumber = document.getElementById("guestPhone").value;
                 var result = addAppointmentForGuest(fName, lName, phoneNumber, birthday);
                 console.log(result);
                 openTab('event', "confirmationTab", "tabcontent");
             }
+
+            function validPhone(inputtxt)
+            {
+                var phoneno = /^\+?([0-9]{2})\)?\d{8}$/;
+                if((inputtxt.match(phoneno)))
+                {
+                    return true;
+                }
+                else
+                {
+                    alert("message");
+                    return false;
+                }
+            }
+
             function appointmentConfirmation() {
 
             }
@@ -358,7 +377,7 @@
         </div>
         <div class="col-md-6">
             Already have an account:<br><br>
-            Email: <input title="email" type="text" id="email"><br><br>
+            Email: <input title="email" type="email" id="email"><br><br>
             Password: <input title="password" type="password" id="password"><br><br>
             <label onclick="alert('Reset password');">Forgot password</label><br><br>
             <a href="http://localhost:8080/customerAccount" target="_blank" rel="noopener" class="btn btn-primary">Create

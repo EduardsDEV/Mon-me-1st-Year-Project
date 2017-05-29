@@ -1,6 +1,7 @@
 package dk.kea.dat16j.therussians.moname.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import org.hibernate.validator.constraints.Email;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -22,6 +23,7 @@ public abstract class Account {
     private long accountId;
 
     @Column(name = "email", unique = true, nullable = false)
+    @Email
     private String email;
 
     @Column(name = "password")
