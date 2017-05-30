@@ -14,7 +14,6 @@ import java.util.Collection;
 @Entity
 @Table(name = "accounts")
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "account_type")
 public abstract class Account {
 
     @Id
