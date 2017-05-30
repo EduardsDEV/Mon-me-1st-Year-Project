@@ -41,7 +41,7 @@
             return;
         }
         if (!$('#terms').prop('checked')) {
-            alert("Accept the fking conditions!!!");
+            alert("You need to accept the conditions!!!");
             return;
         }
         var url = "http://localhost:8080/customerAccount/create?email=" + email + "&password=" + password + "&firstName=" + name;
@@ -73,7 +73,6 @@
         }
         else
         {
-            alert("message");
             return false;
         }
     }
@@ -85,9 +84,9 @@ Birthday: <input title="birthday" type="date" id="Birthday"><br><br>
 Email: <input title="email" type="email" id="Email"><br><br>
 Password: <input type="password" id="Password" title="password"><br><br>
 Repeat Password: <input type="password" id="RepeatPassword" title="repeatPassword"><br><br>
-Phone number: <input title="phone" type="number" id="Phone"><br><br>
-<input type="checkbox" name="terms" value="terms" id="terms"> I've read and accepted ur fck conditions<br>
-<input type="checkbox" name="newsletter" value="Newsletter" id="newsletter"> I want ur stupid mails<br>
+Phone number: <input title="phone" type="text" id="Phone"><br><br>
+<input type="checkbox" name="terms" value="terms" id="terms"> I've read and I accept your conditions.<br>
+<input type="checkbox" name="newsletter" value="Newsletter" id="newsletter"> I want to receive newsletters.<br>
 <button onclick="createAccount()">SUBMIT</button>
 </form>
 </body>
