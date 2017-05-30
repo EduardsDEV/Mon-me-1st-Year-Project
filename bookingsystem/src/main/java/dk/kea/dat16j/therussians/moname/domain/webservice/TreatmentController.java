@@ -154,7 +154,7 @@ public class TreatmentController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public void getFile(
+    public void loadPage(
             HttpServletResponse response) throws IOException {
         String src = "src/main/resources/templates/treatments.html";
         HtmlFileLoader.loadPage(response, src);
