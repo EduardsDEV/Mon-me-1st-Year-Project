@@ -199,7 +199,7 @@ public class AppointmentController {
         }
         boolean hasPrivilege = ac.hasPrivilege(InitialDataLoader.EDIT_APPOINTMENT);
         // TODO: 5/22/2017 Check if the appointment belongs to the customer
-        // TODO: 5/22/2017 Do so that the checkAvailable doesn't interfer with this appointment
+        // TODO: 5/22/2017 Do so that the checkAvailable doesn't interfere with this appointment
         if (hasPrivilege) {
             Appointment a = appointmentRepository.findOne(appointmentId);
             if (a == null) {

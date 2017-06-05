@@ -86,7 +86,6 @@ public class CustomerAccountController {
 
         // TODO: 19-May-17 Should the customer id be changed?
         //temp.setCustomerId(customerId);
-        
         accountRepository.save(ac);
         return "Edited";
     }
